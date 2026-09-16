@@ -1299,6 +1299,14 @@
             }
           },
           {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort comments by field. Supported values: 'relevance', 'date'",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "description": "Page number for pagination. Default is 1",
