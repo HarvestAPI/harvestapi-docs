@@ -21,14 +21,14 @@ fetch(`https://api.harvestapi.io/linkedin/profile-posts?${params.toString()}`, {
 
 ```bash cURL
 curl --request GET \
-  --url https://api.harvestapi.io/linkedin/profile-posts?profilePublicIdentifier=williamhgates&page=1 \
+  --url https://api.harvestapi.io/linkedin/profile-posts?profile=williamhgates&page=1 \
   --header 'X-API-Key: <api-key>'
 ```
 
 ```python Python
 import requests
 
-url = "https://api.harvestapi.io/linkedin/profile-posts?profilePublicIdentifier=williamhgates&page=1"
+url = "https://api.harvestapi.io/linkedin/profile-posts?profile=williamhgates&page=1"
 
 headers = {"X-API-Key": "<api-key>"}
 

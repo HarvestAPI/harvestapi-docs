@@ -11,7 +11,7 @@ For example, it will scrape this page: https://www.linkedin.com/in/williamhgates
 ```javascript JavaScript
 const params = new URLSearchParams({
   profile: 'https://www.linkedin.com/in/satyanadella',
-  // profileId: 'ACoAAAEkwwAB9KEc2TrQgOLEQ-vzRyZeCDyc6DQ', // profileId is preferable & faster
+  // profile: 'ACoAAAEkwwAB9KEc2TrQgOLEQ-vzRyZeCDyc6DQ', // profile Id is preferable & faster
 });
 fetch(`https://api.harvestapi.io/linkedin/profile-reactions?${params.toString()}`, {
   headers: { 'X-API-Key': '<api-key>' },
