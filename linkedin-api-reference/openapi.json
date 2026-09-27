@@ -64,22 +64,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "skipSmtp",
-            "in": "query",
-            "description": "Include this parameter together with `findEmail` to skip SMTP email verification when finding emails. It will output all possible generated emails without checking deliverability via SMTP. It will do only minimal validations, as checking domains for MX records. This version charges less credits when using with `findEmail`.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "includeAboutProfile",
-            "in": "query",
-            "description": "Include this parameter to scrape the \"About this profile\" popup from LinkedIn profiles.",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
