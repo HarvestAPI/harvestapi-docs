@@ -25,34 +25,18 @@
         "description": "Get the LinkedIn profile of the user. Required at least one of the query parameters",
         "parameters": [
           {
-            "name": "url",
+            "name": "query",
             "in": "query",
-            "description": "URL of the LinkedIn profile (optional)",
+            "description": "URL or public identifier or profile ID of the LinkedIn profile ",
             "schema": {
               "type": "string",
               "format": "url"
             }
           },
           {
-            "name": "publicIdentifier",
-            "in": "query",
-            "description": "Public identifier of the LinkedIn profile (optional)",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "profileId",
-            "in": "query",
-            "description": "ID of the LinkedIn profile (optional)",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "main",
             "in": "query",
-            "description": "Set this parameter to 'true' to return only main version of the profile that you can see on LinkedIn without expanding profile sections - up to 5 experiences, 2 educations, 2 skills, etc. This version charges less credits",
+            "description": "Set this parameter to 'true' to return only main version of the profile that you can see on LinkedIn without expanding profile sections - up to 5 experiences, 2 educations, 2 skills, etc. This version charges fewer credits",
             "schema": {
               "type": "string"
             }

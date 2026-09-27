@@ -7,8 +7,8 @@ openapi: 'GET /linkedin/profile'
 
 ```javascript JavaScript
 const params = new URLSearchParams({
-  url: 'https://www.linkedin.com/in/williamhgates', // by URL
-  // publicIdentifier: 'williamhgates', // by publicIdentifier alternatively
+  query: 'https://www.linkedin.com/in/williamhgates', // by URL
+  // query: 'williamhgates', // by publicIdentifier alternatively
 });
 
 fetch(`https://api.harvestapi.io/linkedin/profile?${params.toString()}`, {
