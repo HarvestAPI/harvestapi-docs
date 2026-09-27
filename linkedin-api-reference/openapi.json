@@ -291,28 +291,12 @@
         "description": "Get the LinkedIn company. Required at least one of the query parameters",
         "parameters": [
           {
-            "name": "url",
+            "name": "query",
             "in": "query",
-            "description": "URL of the LinkedIn company (optional)",
+            "description": "URL or universal name or company ID of the LinkedIn company",
             "schema": {
               "type": "string",
               "format": "url"
-            }
-          },
-          {
-            "name": "universalName",
-            "in": "query",
-            "description": "Universal name of the LinkedIn company profile, can be found in URL (optional)",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "description": "Company name. It will use LinkedIn search and return the most relevant result.",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -1653,23 +1637,7 @@
           {
             "name": "company",
             "in": "query",
-            "description": "Filter posts by this company URL",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "companyId",
-            "in": "query",
-            "description": "Filter posts by company ID. It's faster to search by ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "companyUniversalName",
-            "in": "query",
-            "description": "Filter posts by company universal name (last part in the URL)",
+            "description": "Filter posts by this company URL or universal name or company ID",
             "schema": {
               "type": "string"
             }
