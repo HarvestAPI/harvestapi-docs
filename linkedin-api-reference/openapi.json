@@ -62,7 +62,7 @@
                       "$ref": "#/components/schemas/Profile"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -241,7 +241,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -312,7 +312,7 @@
                       "$ref": "#/components/schemas/Company"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -482,6 +482,182 @@
         }
       }
     },
+    "/linkedin/company-people-stats": {
+      "get": {
+        "summary": "Get the LinkedIn company people stats",
+        "description": "Get the People statistics of a LinkedIn company page: where the employees are located, where they studied, etc.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "URL or universal name or company ID of the LinkedIn company. A company ID skips the company lookup and answers faster",
+            "schema": {
+              "type": "string",
+              "format": "url"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company people stats response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "element": {
+                      "$ref": "#/components/schemas/CompanyPeopleStats"
+                    },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "query": {
+                      "type": "object",
+                      "properties": {
+                        "universalName": {
+                          "type": "string"
+                        },
+                        "companyId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "element": {
+                    "id": "1441",
+                    "universalName": "google",
+                    "linkedinUrl": "https://www.linkedin.com/company/google",
+                    "peopleStats": [
+                      {
+                        "statTitle": "Locations",
+                        "values": [
+                          {
+                            "title": "United States",
+                            "count": 79084
+                          },
+                          {
+                            "title": "California, United States",
+                            "count": 47339
+                          },
+                          {
+                            "title": "San Francisco Bay Area",
+                            "count": 42556
+                          }
+                        ]
+                      },
+                      {
+                        "statTitle": "School",
+                        "values": [
+                          {
+                            "title": "University of California, Berkeley",
+                            "count": 3558
+                          },
+                          {
+                            "title": "Stanford University",
+                            "count": 3191
+                          },
+                          {
+                            "title": "Massachusetts Institute of Technology",
+                            "count": 1594
+                          }
+                        ]
+                      },
+                      {
+                        "statTitle": "Current Function",
+                        "values": [
+                          {
+                            "title": "Engineering",
+                            "count": 76734
+                          },
+                          {
+                            "title": "Information Technology",
+                            "count": 19508
+                          },
+                          {
+                            "title": "Business Development",
+                            "count": 15830
+                          }
+                        ]
+                      },
+                      {
+                        "statTitle": "Skill Explicit",
+                        "values": [
+                          {
+                            "title": "Python (Programming Language)",
+                            "count": 53899
+                          },
+                          {
+                            "title": "Java",
+                            "count": 48710
+                          },
+                          {
+                            "title": "C++",
+                            "count": 45410
+                          }
+                        ]
+                      },
+                      {
+                        "statTitle": "Service categories",
+                        "values": [
+                          {
+                            "title": "Consulting",
+                            "count": 1870
+                          },
+                          {
+                            "title": "Marketing",
+                            "count": 1545
+                          },
+                          {
+                            "title": "Software Development",
+                            "count": 1396
+                          }
+                        ]
+                      },
+                      {
+                        "statTitle": "Field of Study",
+                        "values": [
+                          {
+                            "title": "Computer Science",
+                            "count": 44460
+                          },
+                          {
+                            "title": "Computational Science",
+                            "count": 39151
+                          },
+                          {
+                            "title": "Computer Engineering",
+                            "count": 10590
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "status": 200,
+                  "query": {
+                    "universalName": "google"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/linkedin/job": {
       "get": {
         "summary": "Get the LinkedIn job details",
@@ -517,7 +693,7 @@
                       "$ref": "#/components/schemas/Job"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -697,7 +873,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -783,7 +959,7 @@
                       }
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -847,7 +1023,7 @@
                       "$ref": "#/components/schemas/PostShort"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1027,7 +1203,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1133,7 +1309,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1198,7 +1374,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1271,7 +1447,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1336,7 +1512,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1419,7 +1595,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1493,7 +1669,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1583,7 +1759,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1696,7 +1872,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1778,7 +1954,7 @@
                       "$ref": "#/components/schemas/Group"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -1965,7 +2141,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -2321,7 +2497,7 @@
                       "$ref": "#/components/schemas/Pagination"
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -2602,7 +2778,7 @@
                       }
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -2715,7 +2891,7 @@
                       }
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -2835,7 +3011,7 @@
                       }
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -2933,7 +3109,7 @@
                       }
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -3059,7 +3235,7 @@
                       }
                     },
                     "status": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "error": {
                       "type": "string"
@@ -4101,6 +4277,58 @@
           },
           "paidCompany": {
             "type": "boolean"
+          }
+        }
+      },
+
+      "CompanyPeopleStats": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LinkedIn company ID"
+          },
+          "universalName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Universal name of the company (the last part of its URL). Null when the company was requested by ID"
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "peopleStats": {
+            "type": "array",
+            "description": "One entry per \"People\" tab group, always in this order: Locations, School, Current Function, Skill Explicit, Service categories, Field of Study. Each group holds up to 15 values sorted by count, largest first; a group without data has an empty values list",
+            "items": {
+              "$ref": "#/components/schemas/CompanyPeopleStat"
+            }
+          }
+        }
+      },
+
+      "CompanyPeopleStat": {
+        "type": "object",
+        "properties": {
+          "statTitle": {
+            "type": "string",
+            "description": "Name of the group: \"Locations\", \"School\", \"Current Function\", \"Skill Explicit\", \"Service categories\" or \"Field of Study\""
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Value within the group, e.g. \"United States\" for Locations"
+                },
+                "count": {
+                  "type": "integer",
+                  "description": "Number of the company employees matching the value"
+                }
+              }
+            }
           }
         }
       },

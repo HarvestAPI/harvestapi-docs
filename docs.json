@@ -43,7 +43,8 @@
             "pages": [
               "linkedin-api-reference/company/get",
               "linkedin-api-reference/company/search",
-              "linkedin-api-reference/company/company-posts"
+              "linkedin-api-reference/company/company-posts",
+              "linkedin-api-reference/company/people-stats"
             ]
           },
           {

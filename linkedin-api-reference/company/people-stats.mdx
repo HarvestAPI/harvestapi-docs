@@ -1,0 +1,44 @@
+---
+title: 'Company People Stats'
+openapi: 'GET /linkedin/company-people-stats'
+---
+
+## Get the People tab statistics of a LinkedIn company
+
+Returns the breakdown shown on the "People" tab of a company page: where the employees are located, where they studied, what they do, what they are skilled at, the service categories they offer and their fields of study. Every group is a list of values with the number of employees matching each value, up to 15 values per group, largest first.
+
+<CodeGroup>
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  query: 'https://www.linkedin.com/company/google/', // by URL
+  // query: 'google', // by universal name alternatively
+  // query: '1441', // or by company ID
+});
+
+fetch(`https://api.harvestapi.io/linkedin/company-people-stats?${params.toString()}`, {
+  headers: { 'X-API-Key': '<api-key>' },
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+```bash cURL
+curl --request GET \
+  --url https://api.harvestapi.io/linkedin/company-people-stats?query=google \
+  --header 'X-API-Key: <api-key>'
+```
+
+```python Python
+import requests
+
+url = "https://api.harvestapi.io/linkedin/company-people-stats?query=google"
+
+headers = {"X-API-Key": "<api-key>"}
+
+response = requests.request("GET", url, headers=headers)
+
+print(response.text)
+```
+
+</CodeGroup>
