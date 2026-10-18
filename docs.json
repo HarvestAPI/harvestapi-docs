@@ -44,7 +44,9 @@
               "linkedin-api-reference/company/get",
               "linkedin-api-reference/company/search",
               "linkedin-api-reference/company/company-posts",
-              "linkedin-api-reference/company/people-stats"
+              "linkedin-api-reference/company/people-stats",
+              "linkedin-api-reference/accounts/search-accounts",
+              "linkedin-api-reference/accounts/account-insights"
             ]
           },
           {

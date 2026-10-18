@@ -1,0 +1,36 @@
+---
+title: 'Search Accounts'
+openapi: 'GET /linkedin/account-search'
+---
+
+- Search LinkedIn companies by filters the [company search](/linkedin-api-reference/company/search) doesn't have: headcount growth, annual revenue, number of followers, department headcount and its growth, hiring on LinkedIn, senior leadership changes, funding events and Fortune 500 rank.
+- Every result has the company ID: get its full profile with [Get Company](/linkedin-api-reference/company/get) or in-depth insights with [Account Insights](/linkedin-api-reference/accounts/account-insights).
+- 25 results per page, up to 100 pages.
+
+## Examples
+
+<CodeGroup>
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  page: '1',
+  search: 'software',
+  headquarterLocations: 'United States',
+  companyHeadcount: '51-200,201-500',
+  annualRevenue: '10-100;USD',
+  departmentHeadcount: '10-100;Engineering',
+  jobOpportunities: 'HIRING_ON_LINKEDIN',
+  excludeIndustryIds: '6',
+});
+fetch(`https://api.harvestapi.io/linkedin/account-search?${params.toString()}`, {
+  headers: { 'X-API-Key': '<api-key>' },
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+</CodeGroup>
+
+## Session ID
+
+LinkedIn personalizes search results, so different pages of the same search can come from different resources and be inconsistent. Pass the same `sessionId` with every page to keep them on one resource: see [Session ID](/linkedin-api-reference/leads/search-leads#session-id) in the lead search for how it works.

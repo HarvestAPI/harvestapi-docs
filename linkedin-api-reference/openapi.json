@@ -2521,6 +2521,909 @@
       }
     },
 
+    "/linkedin/account-search": {
+      "get": {
+        "summary": "Search LinkedIn accounts",
+        "description": "Search LinkedIn companies by advanced filters (headcount and its growth, revenue, department headcount, hiring, recent activities, Fortune lists) with inclusion and exclusion criteria",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search query. Fuzzy search, supports LinkedIn's search operators",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "headquarterLocations",
+            "in": "query",
+            "description": "Filter by headquarters location text. Comma-separated (max 70)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "headquarterGeoIds",
+            "in": "query",
+            "description": "Filter by headquarters LinkedIn Geo ID. Comma-separated (max 70). Use /linkedin/geo-id-search to find IDs",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "industryIds",
+            "in": "query",
+            "description": "Filter by industry IDs. Comma-separated (max 70). Full list: https://github.com/HarvestAPI/linkedin-industry-codes-v2/blob/main/linkedin_industry_code_v2_all_eng_with_header.csv",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "companyHeadcount",
+            "in": "query",
+            "description": "Filter by company headcount. Comma-separated. Available values: 1-10, 11-50, 51-200, 201-500, 501-1000, 1001-5000, 5001-10000, 10001+",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "companyHeadcountGrowth",
+            "in": "query",
+            "description": "Filter by company headcount growth in percent, as `min-max`. Example: `1-100`",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "annualRevenue",
+            "in": "query",
+            "description": "Filter by annual revenue in millions, as `min-max;currency` (USD by default). Examples: `1-10;USD`, `0.5-1000`",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "numOfFollowers",
+            "in": "query",
+            "description": "Filter by number of followers. Comma-separated. Available values: 1-50, 51-100, 101-1000, 1001-5000, 5001+",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "departmentHeadcount",
+            "in": "query",
+            "description": "Filter by the headcount of a department, as `min-max;department`. Example: `10-100;Engineering`. Departments: Accounting, Administrative, Arts and Design, Business Development, Community and Social Services, Consulting, Education, Engineering, Entrepreneurship, Finance, Healthcare Services, Human Resources, Information Technology, Legal, Marketing, Media and Communication, Military and Protective Services, Operations, Product Management, Program and Project Management, Purchasing, Quality Assurance, Real Estate, Research, Sales, Support",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "departmentHeadcountGrowth",
+            "in": "query",
+            "description": "Filter by the headcount growth of a department in percent, as `min-max;department`. Example: `5-50;Sales`. Same departments as `departmentHeadcount`",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jobOpportunities",
+            "in": "query",
+            "description": "Set to `HIRING_ON_LINKEDIN` to find companies that are hiring on LinkedIn",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountActivities",
+            "in": "query",
+            "description": "Filter by recent company activities. Comma-separated. Available values: SENIOR_LEADERSHIP_CHANGES_LAST_3_MONTHS, FUNDING_EVENTS_PAST_12_MONTHS",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fortune",
+            "in": "query",
+            "description": "Filter by Fortune 500 rank. Comma-separated. Available values: 50 (Fortune 50), 51_100, 101_250, 251_500",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeHeadquarterLocations",
+            "in": "query",
+            "description": "Headquarters locations to exclude. Comma-separated (max 70)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeHeadquarterGeoIds",
+            "in": "query",
+            "description": "Headquarters Geo IDs to exclude. Comma-separated (max 70)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeIndustryIds",
+            "in": "query",
+            "description": "Industry IDs to exclude. Comma-separated (max 70)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeCompanyHeadcount",
+            "in": "query",
+            "description": "Company headcounts to exclude. Comma-separated. Same values as `companyHeadcount`",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination (clamped at 100). 25 results per page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "sessionId",
+            "in": "query",
+            "description": "Session ID to use for the search. See https://docs.harvestapi.io/linkedin-api-reference/leads/search-leads#session-id for details.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account search response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "elements": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AccountShort"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "elements": [
+                    {
+                      "id": "1035",
+                      "name": "Microsoft",
+                      "linkedinUrl": "https://www.linkedin.com/company/1035",
+                      "description": "Every company has a mission. What's ours? To empower every person and every organization to achieve more.",
+                      "industry": "Software Development",
+                      "employeeCountRange": "10001+",
+                      "employeeDisplayCount": "220K+",
+                      "logoUrl": "https://media.licdn.com/dms/image/v2/D560BAQH32RJQCl3dDQ/company-logo_400_400/B56ZYQ0mrGGoAc-/0/1744038948046/microsoft_logo?e=1793836800&v=beta&t=JH7PTbL3UCVJmkaiI6Z2aUeXHDoVPM_TzQRclPPsptI",
+                      "highlights": [
+                        {
+                          "id": "AIQ_STRATEGIC_PRIORITIES",
+                          "label": "Expansion of Cloud Services",
+                          "header": "Expansion of Cloud Services",
+                          "message": null
+                        },
+                        {
+                          "id": "HIRING_ON_LINKEDIN",
+                          "label": "Hiring on Linkedin",
+                          "header": "Hiring on Linkedin",
+                          "message": "Microsoft is actively hiring on LinkedIn. This is a sign they may be increasing their headcount."
+                        },
+                        {
+                          "id": "SENIOR_LEADERSHIP_CHANGE",
+                          "label": "21 senior leadership hires",
+                          "header": "Senior leadership hires in the last 90 days",
+                          "message": "Microsoft’s senior leadership has recently changed. This can signal an openness to explore new products or services."
+                        }
+                      ]
+                    },
+                    {
+                      "id": "95716738",
+                      "name": "Microsoft Intune",
+                      "linkedinUrl": "https://www.linkedin.com/company/95716738",
+                      "description": "Microsoft Intune empowers your organization to simplify endpoint management, help protect a hybrid workforce, and power better user experiences.",
+                      "industry": "IT Services and IT Consulting",
+                      "employeeCountRange": "10001+",
+                      "employeeDisplayCount": "989",
+                      "logoUrl": "https://media.licdn.com/dms/image/v2/D4D0BAQGLOoNygVSSeg/company-logo_400_400/B4DZaCFLXBG8Ac-/0/1745939117800/microsoft_intune_product_logo?e=1793836800&v=beta&t=dMlG_JGIxIfrMOm4iFoJulTHXJYuFh-ouJm2ayOBCec",
+                      "highlights": []
+                    }
+                  ],
+                  "pagination": {
+                    "totalElements": 98574,
+                    "totalPages": 100,
+                    "pageNumber": 1,
+                    "previousElements": 0,
+                    "pageSize": 25
+                  },
+                  "status": 200
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/linkedin/account-insights": {
+      "get": {
+        "summary": "Get LinkedIn account insights of a company",
+        "description": "Get in-depth insights about a LinkedIn company: company profile and revenue, AI-generated summaries (business model, strategic priorities, challenges, competitors), key people, headcount and hiring charts, job openings, suggested people to reach out to, and the latest alerts.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "URL or universal name or company ID of the LinkedIn company. A company ID skips the company lookup and answers faster",
+            "schema": {
+              "type": "string",
+              "format": "url"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account insights response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "element": {
+                      "$ref": "#/components/schemas/AccountInsights"
+                    },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "query": {
+                      "type": "object",
+                      "properties": {
+                        "query": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "element": {
+                    "id": "1441",
+                    "name": "Google",
+                    "linkedinUrl": "https://www.linkedin.com/company/google/",
+                    "company": {
+                      "description": "A problem isn't truly solved until it's solved for all. Googlers build products that help create opportunities for everyone, whether down the street or across the globe.",
+                      "industry": "Software Development",
+                      "type": "Public Company",
+                      "yearFounded": null,
+                      "website": "https://goo.gle/3DLEokh",
+                      "location": "Mountain View, California, United States",
+                      "headquarters": {
+                        "country": "United States",
+                        "geographicArea": "CA",
+                        "city": "Mountain View",
+                        "postalCode": "94043",
+                        "line1": "1600 Amphitheatre Parkway",
+                        "line2": null
+                      },
+                      "specialties": ["search", "ads", "mobile", "android", "online video", "apps"],
+                      "revenueRange": {
+                        "min": {
+                          "amount": 1,
+                          "unit": "BILLION",
+                          "currency": "USD"
+                        },
+                        "max": {
+                          "amount": 1000,
+                          "unit": "BILLION",
+                          "currency": "USD"
+                        }
+                      },
+                      "employeeCount": 203261,
+                      "employeeCountRange": "10001+",
+                      "employeeDisplayCount": "200K+",
+                      "employeeGrowth": [
+                        {
+                          "timespan": "SIX_MONTHS",
+                          "percentage": 3
+                        },
+                        {
+                          "timespan": "YEAR",
+                          "percentage": 3
+                        },
+                        {
+                          "timespan": "TWO_YEAR",
+                          "percentage": 8
+                        }
+                      ],
+                      "logoUrl": "https://media.licdn.com/dms/image/v2/D4E0BAQGv3cqOuUMY7g/company-logo_400_400/B4EZmhegXHGcAc-/0/1759350753990/google_logo?e=1793232000&v=beta&t=mI4Bwg5fs62z2HpOijmRD-H8xT_owPQfiOlcUvQBg3s",
+                      "coverUrl": "https://media.licdn.com/dms/image/v2/D563DAQGtANfXBwQdug/image-scale_191_1128/B56Z2dEWlfIAAg-/0/1776456657776/google_cover?e=1792522800&v=beta&t=hTTl_3pxIoExxId3yCofTG42dZSXgBewsy8ogDbW-QA"
+                    },
+                    "commonSearches": {
+                      "allEmployees": {
+                        "count": 203261,
+                        "displayCount": "200K+"
+                      },
+                      "decisionMakers": {
+                        "displayCount": "7.5K+"
+                      }
+                    },
+                    "howTheyMakeMoney": {
+                      "text": "Google makes money primarily through advertising, cloud services, and consumer products. Their target market includes individual users, businesses, and developers. Top solutions include Google Search, YouTube, Google Cloud, and the Android operating system.",
+                      "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+                      "annualRevenue": {
+                        "period": "2025",
+                        "reported": {
+                          "amount": 402.84,
+                          "unit": "BILLION",
+                          "currency": "USD"
+                        },
+                        "estimatedMin": {
+                          "amount": 402.84,
+                          "unit": "BILLION",
+                          "currency": "USD"
+                        },
+                        "estimatedMax": {
+                          "amount": 402.84,
+                          "unit": "BILLION",
+                          "currency": "USD"
+                        },
+                        "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+                      },
+                      "quarterRevenue": {
+                        "period": "Q2 2026",
+                        "reported": {
+                          "amount": 119.8,
+                          "unit": "BILLION",
+                          "currency": "USD"
+                        },
+                        "estimatedMin": {
+                          "amount": 119.8,
+                          "unit": "BILLION",
+                          "currency": "USD"
+                        },
+                        "estimatedMax": {
+                          "amount": 119.8,
+                          "unit": "BILLION",
+                          "currency": "USD"
+                        },
+                        "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+                      }
+                    },
+                    "strategicPriorities": [
+                      {
+                        "title": "Expanded AI Offerings in Products and Services",
+                        "description": "Google is focusing on incorporating AI into its products and services, such as AI Overviews and AI Mode in Search, and enterprise AI solutions on Google Cloud Platform.",
+                        "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+                      },
+                      {
+                        "title": "AI and Machine Learning",
+                        "description": "Google is heavily investing in AI and machine learning technologies, including the development of new Gemini models and AI-powered products like smarter Search and smart glasses.",
+                        "source": "https://techcabal.com/2026/06/18/every-google-product-announced-in-2026/"
+                      }
+                    ],
+                    "businessChallenges": [
+                      {
+                        "title": "Dependence on Advertising Revenue",
+                        "description": "Google generates a significant portion of its revenues from advertising, and any reduction in advertising spending, loss of partners, or shifts in online advertising could harm its business.",
+                        "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+                      },
+                      {
+                        "title": "Employee Departures in AI",
+                        "description": "Recent AI departures put Google in the spotlight, revealing a broader shift in why employees are leaving.",
+                        "source": "https://www.businessinsider.com/google-employees-leaving-ai-openai-anthropic-big-tech-jobs-careers-2026-7"
+                      }
+                    ],
+                    "competitiveLandscape": {
+                      "text": "Google operates in a highly competitive landscape, facing significant challenges from major tech companies like Meta, Microsoft, and Amazon. The company is engaged in intense competition across various sectors including AI, cloud computing, and digital advertising.",
+                      "source": null,
+                      "competitors": [
+                        {
+                          "id": "1586",
+                          "name": "Amazon",
+                          "industry": "Software Development",
+                          "location": null,
+                          "employeeCountRange": null,
+                          "employeeDisplayCount": null,
+                          "employeeGrowth": [],
+                          "linkedinUrl": "https://www.linkedin.com/company/amazon/",
+                          "logoUrl": "https://media.licdn.com/dms/image/v2/D560BAQGDLy4STCnHbg/company-logo_400_400/B56ZnZxDipI0AY-/0/1760295142304/amazon_logo?e=1793232000&v=beta&t=qvULHFrc3dgCWYhozDqnZ4E8-jZQDgp6xQnNJUHJc-M"
+                        },
+                        {
+                          "id": "10667",
+                          "name": "Meta",
+                          "industry": "Software Development",
+                          "location": null,
+                          "employeeCountRange": null,
+                          "employeeDisplayCount": null,
+                          "employeeGrowth": [],
+                          "linkedinUrl": "https://www.linkedin.com/company/meta/",
+                          "logoUrl": "https://media.licdn.com/dms/image/v2/D560BAQHpGLIanfsREg/company-logo_400_400/B56aDarbc1IwAY-/0/1790375213168/meta_logo?e=1793232000&v=beta&t=ho_MZP4y7N6KT2g60rrwDLllKZrCTm5xOsIbqCPmvsI"
+                        }
+                      ],
+                      "sources": [
+                        "https://www.geeky-gadgets.com/google-smart-glasses-2026-comeback/",
+                        "https://corpdigest.com/company/google/competitive-strategy"
+                      ]
+                    },
+                    "headcountInsights": {
+                      "summaries": [
+                        "Focus on engineering: The 'Engineering' department has seen a 3% increase in headcount, indicating a significant investment in technical and product development capabilities.",
+                        "Growth in IT and sales: The 'Information Technology' and 'Sales' departments have both experienced a 1% increase in headcount, suggesting a focus on expanding technological infrastructure and sales operations."
+                      ],
+                      "employeeCount": 203261,
+                      "medianTenureYears": 4.9,
+                      "growth": [
+                        {
+                          "timespan": "SIX_MONTHS",
+                          "percentage": 3
+                        },
+                        {
+                          "timespan": "YEAR",
+                          "percentage": 3
+                        },
+                        {
+                          "timespan": "TWO_YEAR",
+                          "percentage": 8
+                        }
+                      ]
+                    },
+                    "keyPeople": [
+                      {
+                        "id": "ACwAABP6-S0BoCF1EWRJWCodyajGEl-tBN2aDi0",
+                        "name": "Philipp Schindler",
+                        "firstName": "Philipp",
+                        "lastName": "Schindler",
+                        "linkedinUrl": "https://www.linkedin.com/in/ACwAABP6-S0BoCF1EWRJWCodyajGEl-tBN2aDi0",
+                        "pictureUrl": "https://media.licdn.com/dms/image/v2/D5603AQEDM5-09Ek5dA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1713827650574?e=1793232000&v=beta&t=F3S76sJLoLDV24n_8ENRIw6fHXjyC1OTwXMOu5b-U9M",
+                        "title": "SVP & Chief Business Officer",
+                        "companyName": "Google",
+                        "location": "Mountain View, California, United States",
+                        "industry": "Technology, Information and Internet",
+                        "positions": [
+                          {
+                            "title": "SVP & Chief Business Officer",
+                            "companyName": "Google",
+                            "companyId": "1441",
+                            "location": "Mountain View, CA",
+                            "description": null,
+                            "startedOn": "2015-08",
+                            "current": true,
+                            "tenureAtPosition": null,
+                            "tenureAtCompany": null
+                          },
+                          {
+                            "title": "VP Global Sales & Operations",
+                            "companyName": "Google",
+                            "companyId": "1441",
+                            "location": "Mountain View, California, US",
+                            "description": null,
+                            "startedOn": "2012-01",
+                            "current": false,
+                            "tenureAtPosition": null,
+                            "tenureAtCompany": null
+                          }
+                        ]
+                      }
+                    ],
+                    "executiveVoices": {
+                      "summary": "Executives in this company are talking about",
+                      "posts": [
+                        {
+                          "id": "urn:li:ugcPost:7513642510318141440",
+                          "url": "https://www.linkedin.com/feed/update/urn:li:ugcPost:7513642510318141440",
+                          "text": "It’s now easier than ever to identify whether a piece of online content was created with AI. That’s because starting today, SynthID Universal Detector is live and available to anyone at synthid.com.",
+                          "createdAt": "2026-10-07T16:52:00.000Z",
+                          "author": {
+                            "id": "ACwAAC5VbIIBaPSLrxUI1nMopo1-HK7DVi-QnRk",
+                            "name": "Kent Walker",
+                            "firstName": "Kent",
+                            "lastName": "Walker",
+                            "linkedinUrl": "https://www.linkedin.com/in/ACwAAC5VbIIBaPSLrxUI1nMopo1-HK7DVi-QnRk",
+                            "pictureUrl": "https://media.licdn.com/dms/image/v2/C5603AQHp5oMi1Az3JQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1574461282960?e=1793232000&v=beta&t=Z7V-YtsSsiNG-WasfwSrxgI7A01kfNfcoUc22qRyr20",
+                            "title": "President, Global Affairs",
+                            "companyName": "Google",
+                            "location": "Mountain View, California, United States",
+                            "industry": "Technology, Information and Internet",
+                            "positions": [
+                              {
+                                "title": "President, Global Affairs",
+                                "companyName": "Google",
+                                "companyId": "1441",
+                                "location": null,
+                                "description": null,
+                                "startedOn": "2021-10",
+                                "current": true,
+                                "tenureAtPosition": null,
+                                "tenureAtCompany": null
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "relatedNews": [
+                      {
+                        "title": "Google AI announcements from August 2026 - The Keyword",
+                        "url": "https://blog.google/innovation-and-ai/technology/google-ai-updates-august-2026/",
+                        "description": "Teams across Google are working on ways to unlock AI’s benefits in fields as wide-ranging as healthcare, crisis response, and education. To keep you posted on our progress, we're doing a regular roundup of Google's most recent AI news. Here’s a look back at some of our AI announcements from August.",
+                        "imageUrl": null
+                      },
+                      {
+                        "title": "See the latest Google Ads product announcements",
+                        "url": "https://business.google.com/us/accelerate/announcements/",
+                        "description": "See the latest Google Ads product announcements Discover the most recent Google Ads news and announcements to help you achieve your advertising goals.",
+                        "imageUrl": null
+                      }
+                    ],
+                    "relationshipExplorer": {
+                      "totalDisplayCount": "395",
+                      "total": 395,
+                      "highlights": [
+                        {
+                          "id": "RPC",
+                          "label": "1 recently changed jobs",
+                          "count": 1
+                        }
+                      ],
+                      "companyHighlights": [
+                        {
+                          "id": "AIQ_STRATEGIC_PRIORITIES",
+                          "label": "Increasing Revenues Beyond Advertising",
+                          "header": "Increasing Revenues Beyond Advertising",
+                          "message": null
+                        },
+                        {
+                          "id": "HIRING_ON_LINKEDIN",
+                          "label": "Hiring on Linkedin",
+                          "header": "Hiring on Linkedin",
+                          "message": "This company is actively hiring on LinkedIn. This is a sign they may be increasing their headcount."
+                        }
+                      ],
+                      "leads": [
+                        {
+                          "id": "ACwAAACiRBsBC68GAmMYHNyU7JE2drkEyaS3zfs",
+                          "name": "Stephanie Buscemi",
+                          "firstName": "Stephanie",
+                          "lastName": "Buscemi",
+                          "linkedinUrl": "https://www.linkedin.com/in/ACwAAACiRBsBC68GAmMYHNyU7JE2drkEyaS3zfs",
+                          "pictureUrl": "https://media.licdn.com/dms/image/v2/C5603AQGchuNSH0FU3g/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1566501809863?e=1793232000&v=beta&t=v0BA-JhuM-ciMX4GPeUWSI60s2_i1T-oX4AX6GehhBg",
+                          "headline": "Chief Marketing Officer, Google Cloud at Google",
+                          "summary": "My career spans 25+ years building and scaling global organizations at the intersection of enterprise software, cloud, data, and AI.",
+                          "location": "San Francisco Bay Area",
+                          "premium": true,
+                          "openProfile": false,
+                          "seniority": ["Owner / Partner", "CXO"],
+                          "currentPositions": [
+                            {
+                              "title": "Chief Marketing Officer, Google Cloud",
+                              "companyName": "Google",
+                              "companyId": "1441",
+                              "location": null,
+                              "description": null,
+                              "startedOn": "2026-09",
+                              "current": true,
+                              "tenureAtPosition": {
+                                "years": 0,
+                                "months": 2
+                              },
+                              "tenureAtCompany": {
+                                "years": 0,
+                                "months": 2
+                              }
+                            }
+                          ],
+                          "highlights": [
+                            {
+                              "id": "RECENTLY_HIRED",
+                              "label": "Recently hired",
+                              "header": "Stephanie was recently hired",
+                              "message": "Google hired Stephanie as a Chief Marketing Officer, Google Cloud 2 months ago from Confluent."
+                            },
+                            {
+                              "id": "POSTED_ON_LINKEDIN",
+                              "label": "1 recent post on Linkedin",
+                              "header": "Posts on LinkedIn in the last 30 days",
+                              "message": null
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "growthInsights": {
+                      "employeeCount": {
+                        "total": 203261,
+                        "changePercentage": 9,
+                        "medianTenureYears": 4.9,
+                        "monthly": [
+                          {
+                            "month": "2026-08",
+                            "count": 203277,
+                            "changePercentage": 0
+                          },
+                          {
+                            "month": "2026-09",
+                            "count": 203334,
+                            "changePercentage": 0
+                          },
+                          {
+                            "month": "2026-10",
+                            "count": 203261,
+                            "changePercentage": 0
+                          }
+                        ]
+                      },
+                      "headcountByFunction": {
+                        "total": {
+                          "function": "Total",
+                          "count": 203261,
+                          "changePercentage": 4,
+                          "monthly": [
+                            {
+                              "month": "2026-08",
+                              "count": 203277,
+                              "changePercentage": 0
+                            },
+                            {
+                              "month": "2026-09",
+                              "count": 203334,
+                              "changePercentage": 0
+                            },
+                            {
+                              "month": "2026-10",
+                              "count": 203261,
+                              "changePercentage": 0
+                            }
+                          ]
+                        },
+                        "threeMonths": [
+                          {
+                            "function": "Engineering",
+                            "count": 86472,
+                            "changePercentage": 0,
+                            "monthly": [
+                              {
+                                "month": "2026-08",
+                                "count": 86435,
+                                "changePercentage": 0
+                              },
+                              {
+                                "month": "2026-09",
+                                "count": 86502,
+                                "changePercentage": 0
+                              },
+                              {
+                                "month": "2026-10",
+                                "count": 86472,
+                                "changePercentage": 0
+                              }
+                            ]
+                          }
+                        ],
+                        "sixMonths": [
+                          {
+                            "function": "Engineering",
+                            "count": 86472,
+                            "changePercentage": 2,
+                            "monthly": [
+                              {
+                                "month": "2026-08",
+                                "count": 86435,
+                                "changePercentage": 0
+                              },
+                              {
+                                "month": "2026-09",
+                                "count": 86502,
+                                "changePercentage": 0
+                              },
+                              {
+                                "month": "2026-10",
+                                "count": 86472,
+                                "changePercentage": 0
+                              }
+                            ]
+                          }
+                        ],
+                        "oneYear": [
+                          {
+                            "function": "Engineering",
+                            "count": 86472,
+                            "changePercentage": 5,
+                            "monthly": [
+                              {
+                                "month": "2026-08",
+                                "count": 86435,
+                                "changePercentage": 0
+                              },
+                              {
+                                "month": "2026-09",
+                                "count": 86502,
+                                "changePercentage": 0
+                              },
+                              {
+                                "month": "2026-10",
+                                "count": 86472,
+                                "changePercentage": 0
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "newHires": [
+                        {
+                          "month": "2026-08",
+                          "total": 2398,
+                          "senior": 6
+                        },
+                        {
+                          "month": "2026-09",
+                          "total": 1649,
+                          "senior": 6
+                        },
+                        {
+                          "month": "2026-10",
+                          "total": 335,
+                          "senior": 1
+                        }
+                      ],
+                      "jobOpenings": {
+                        "latestQuarter": "2026-10",
+                        "total": {
+                          "function": "Total",
+                          "latestCount": 9812,
+                          "threeMonthPercentage": -4,
+                          "sixMonthPercentage": -12,
+                          "oneYearPercentage": 60
+                        },
+                        "byFunction": [
+                          {
+                            "function": "Accounting",
+                            "latestCount": 56,
+                            "threeMonthPercentage": 100,
+                            "sixMonthPercentage": 133,
+                            "oneYearPercentage": 273
+                          },
+                          {
+                            "function": "Administrative",
+                            "latestCount": 8,
+                            "threeMonthPercentage": 33,
+                            "sixMonthPercentage": -11,
+                            "oneYearPercentage": 0
+                          }
+                        ]
+                      }
+                    },
+                    "recentGrowthAlerts": [
+                      {
+                        "id": ":1441,1365547338,ACCOUNT_HEADCOUNT_ACCELERATED_FLOW)",
+                        "type": "ACCOUNT_HEADCOUNT_ACCELERATED_FLOW",
+                        "createdAt": "2026-10-02T17:34:05.978Z",
+                        "headline": "ByteDance employees are moving to Google.",
+                        "shortHeadline": "ByteDance employees are moving here",
+                        "body": null,
+                        "imageUrl": "https://media.licdn.com/dms/image/v2/C560BAQGA-1ynUGnhlA/company-logo_400_400/company-logo_400_400/0/1630658803864/bytedance_logo?e=1793232000&v=beta&t=3zy8R5AdSHfROyuNHUCKDAeFtx95t96YArFCmsSzwMY",
+                        "lead": null
+                      }
+                    ],
+                    "peopleAlsoViewed": [
+                      {
+                        "id": "1035",
+                        "name": "Microsoft",
+                        "industry": "Software Development",
+                        "location": "Redmond, Washington, United States",
+                        "employeeCountRange": "10001+",
+                        "employeeDisplayCount": "220K+",
+                        "employeeGrowth": [
+                          {
+                            "timespan": "SIX_MONTHS",
+                            "percentage": -3
+                          },
+                          {
+                            "timespan": "YEAR",
+                            "percentage": -3
+                          },
+                          {
+                            "timespan": "TWO_YEAR",
+                            "percentage": -9
+                          }
+                        ],
+                        "linkedinUrl": "https://www.linkedin.com/company/1035",
+                        "logoUrl": "https://media.licdn.com/dms/image/v2/D560BAQH32RJQCl3dDQ/company-logo_400_400/B56ZYQ0mrGGoAc-/0/1744038948046/microsoft_logo?e=1793232000&v=beta&t=-G3KTWbySWNRDLM-7_sSgY3V09nqPA0Iswoptltp6cs"
+                      },
+                      {
+                        "id": "1586",
+                        "name": "Amazon",
+                        "industry": "Software Development",
+                        "location": null,
+                        "employeeCountRange": "10001+",
+                        "employeeDisplayCount": "550K+",
+                        "employeeGrowth": [
+                          {
+                            "timespan": "SIX_MONTHS",
+                            "percentage": 3
+                          },
+                          {
+                            "timespan": "YEAR",
+                            "percentage": 3
+                          },
+                          {
+                            "timespan": "TWO_YEAR",
+                            "percentage": 7
+                          }
+                        ],
+                        "linkedinUrl": "https://www.linkedin.com/company/1586",
+                        "logoUrl": "https://media.licdn.com/dms/image/v2/D560BAQGDLy4STCnHbg/company-logo_400_400/B56ZnZxDipI0AY-/0/1760295142304/amazon_logo?e=1793232000&v=beta&t=qvULHFrc3dgCWYhozDqnZ4E8-jZQDgp6xQnNJUHJc-M"
+                      }
+                    ],
+                    "accountAlerts": {
+                      "nextStart": 21,
+                      "items": [
+                        {
+                          "id": ":1441,1381236658,ACCOUNT_SHARED_UPDATE)",
+                          "type": "ACCOUNT_SHARED_UPDATE",
+                          "createdAt": "2026-10-13T17:46:48.165Z",
+                          "headline": "Google posted a new photo.",
+                          "shortHeadline": "Posted a new photo",
+                          "body": "Over the last five years, we’ve published 90 peer-reviewed research papers about understanding and addressing diseases, accumulating more than 90,000 citations. Our goal is to make diseases more detectable, treatable, and preventable.",
+                          "imageUrl": "https://media.licdn.com/dms/image/v2/D4E0BAQGv3cqOuUMY7g/company-logo_400_400/B4EZmhegXHGcAc-/0/1759350753990/google_logo?e=1793232000&v=beta&t=mI4Bwg5fs62z2HpOijmRD-H8xT_owPQfiOlcUvQBg3s",
+                          "lead": null
+                        }
+                      ]
+                    }
+                  },
+                  "status": 200,
+                  "query": {
+                    "query": "google"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
     "/linkedin/ad-search": {
       "get": {
         "summary": "Search LinkedIn Ad Library",
@@ -4329,6 +5232,1096 @@
                 }
               }
             }
+          }
+        }
+      },
+
+      "AccountShort": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LinkedIn company ID"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "industry": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeeCountRange": {
+            "type": "string",
+            "nullable": true,
+            "description": "Company size as stated on its page, in the form of the `companyHeadcount` values: 1-10, 11-50, 51-200, 201-500, 501-1000, 1001-5000, 5001-10000, 10001+"
+          },
+          "employeeDisplayCount": {
+            "type": "string",
+            "nullable": true,
+            "description": "Employees on LinkedIn, as LinkedIn displays the number, e.g. \"220K+\""
+          },
+          "logoUrl": {
+            "type": "string"
+          },
+          "highlights": {
+            "type": "array",
+            "description": "Signals about the company: \"HIRING_ON_LINKEDIN\" (hiring on LinkedIn), \"SENIOR_LEADERSHIP_CHANGE\" (senior leadership hires in the last 90 days) or \"AIQ_STRATEGIC_PRIORITIES\" (one of its strategic priorities, in `label`)",
+            "items": {
+              "$ref": "#/components/schemas/AccountHighlight"
+            }
+          }
+        }
+      },
+      "AccountInsights": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LinkedIn company ID"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Company name"
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Company page URL",
+            "format": "uri"
+          },
+          "company": {
+            "type": "object",
+            "nullable": true,
+            "description": "Company profile",
+            "properties": {
+              "description": {
+                "type": "string",
+                "nullable": true
+              },
+              "industry": {
+                "type": "string",
+                "nullable": true
+              },
+              "type": {
+                "type": "string",
+                "nullable": true,
+                "description": "Company type, e.g. \"Public Company\" or \"Privately Held\""
+              },
+              "yearFounded": {
+                "type": "integer",
+                "nullable": true
+              },
+              "website": {
+                "type": "string",
+                "nullable": true
+              },
+              "location": {
+                "type": "string",
+                "nullable": true,
+                "description": "Headquarters location as one line, e.g. \"Mountain View, California, United States\""
+              },
+              "headquarters": {
+                "type": "object",
+                "nullable": true,
+                "description": "Headquarters address",
+                "properties": {
+                  "country": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "geographicArea": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "State or region"
+                  },
+                  "city": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "postalCode": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "line1": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "line2": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              },
+              "specialties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "revenueRange": {
+                "type": "object",
+                "nullable": true,
+                "description": "Estimated annual revenue range",
+                "properties": {
+                  "min": {
+                    "$ref": "#/components/schemas/AccountInsightsMoney"
+                  },
+                  "max": {
+                    "$ref": "#/components/schemas/AccountInsightsMoney"
+                  }
+                }
+              },
+              "employeeCount": {
+                "type": "integer",
+                "nullable": true,
+                "description": "Number of employees on LinkedIn"
+              },
+              "employeeCountRange": {
+                "type": "string",
+                "nullable": true,
+                "description": "Headcount range, e.g. \"10001+\""
+              },
+              "employeeDisplayCount": {
+                "type": "string",
+                "nullable": true,
+                "description": "Headcount as LinkedIn displays it, e.g. \"200K+\""
+              },
+              "employeeGrowth": {
+                "type": "array",
+                "description": "Headcount change over the last six months, year and two years",
+                "items": {
+                  "$ref": "#/components/schemas/AccountInsightsGrowth"
+                }
+              },
+              "logoUrl": {
+                "type": "string"
+              },
+              "coverUrl": {
+                "type": "string"
+              }
+            }
+          },
+          "commonSearches": {
+            "type": "object",
+            "nullable": true,
+            "description": "Employee counts of the common searches at the company. Counts are as LinkedIn displays them, e.g. \"7.5K+\"",
+            "properties": {
+              "allEmployees": {
+                "type": "object",
+                "description": "All employees of the company",
+                "properties": {
+                  "count": {
+                    "type": "integer",
+                    "nullable": true
+                  },
+                  "displayCount": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              },
+              "decisionMakers": {
+                "type": "object",
+                "description": "Employees in decision-making roles",
+                "properties": {
+                  "displayCount": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              },
+              "teamLinkConnections": {
+                "type": "object",
+                "description": "Employees connected to your team. Only for requests with a [custom account](/guides/custom-accounts)",
+                "properties": {
+                  "displayCount": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              },
+              "sharedAlumni": {
+                "type": "object",
+                "description": "Employees who studied at the same schools as you. Only for requests with a [custom account](/guides/custom-accounts)",
+                "properties": {
+                  "displayCount": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              },
+              "personas": {
+                "type": "array",
+                "description": "Employee counts per persona of your account. Only for requests with a [custom account](/guides/custom-accounts)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Persona name, e.g. \"Director+\" or \"CXO\""
+                    },
+                    "type": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "e.g. \"DEFAULT_DIRECTOR\", \"DEFAULT_CXO\" or \"USER_GENERATED\""
+                    },
+                    "displayCount": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "howTheyMakeMoney": {
+            "type": "object",
+            "nullable": true,
+            "description": "AI-generated summary of the business model, with the latest yearly and quarterly revenue. Null when LinkedIn has no AI summary of the company (mostly smaller companies)",
+            "properties": {
+              "text": {
+                "type": "string",
+                "nullable": true,
+                "description": "How the company makes money"
+              },
+              "source": {
+                "type": "string",
+                "nullable": true,
+                "description": "Source URL of the summary"
+              },
+              "annualRevenue": {
+                "$ref": "#/components/schemas/AccountInsightsRevenue"
+              },
+              "quarterRevenue": {
+                "$ref": "#/components/schemas/AccountInsightsRevenue"
+              }
+            }
+          },
+          "strategicPriorities": {
+            "type": "array",
+            "description": "AI-generated strategic priorities of the company, each with its source URL. Empty when LinkedIn has no AI summary of the company",
+            "items": {
+              "$ref": "#/components/schemas/AccountInsightsSourcedText"
+            }
+          },
+          "businessChallenges": {
+            "type": "array",
+            "description": "AI-generated business challenges of the company, each with its source URL. Empty when LinkedIn has no AI summary of the company",
+            "items": {
+              "$ref": "#/components/schemas/AccountInsightsSourcedText"
+            }
+          },
+          "competitiveLandscape": {
+            "type": "object",
+            "nullable": true,
+            "description": "AI-generated overview of the competition. Null when LinkedIn has no AI summary of the company",
+            "properties": {
+              "text": {
+                "type": "string",
+                "nullable": true,
+                "description": "Overview of the competition"
+              },
+              "source": {
+                "type": "string",
+                "nullable": true
+              },
+              "competitors": {
+                "type": "array",
+                "description": "Main competitors",
+                "items": {
+                  "$ref": "#/components/schemas/AccountInsightsCompanyCard"
+                }
+              },
+              "sources": {
+                "type": "array",
+                "description": "Source URLs of the overview",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "headcountInsights": {
+            "type": "object",
+            "nullable": true,
+            "description": "Workforce summaries and the current headcount figures",
+            "properties": {
+              "summaries": {
+                "type": "array",
+                "description": "AI-generated observations about the headcount changes by department",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "employeeCount": {
+                "type": "integer",
+                "nullable": true
+              },
+              "medianTenureYears": {
+                "type": "number",
+                "nullable": true,
+                "description": "Median employee tenure in years"
+              },
+              "growth": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AccountInsightsGrowth"
+                }
+              }
+            }
+          },
+          "keyPeople": {
+            "type": "array",
+            "description": "Key executives of the company",
+            "items": {
+              "$ref": "#/components/schemas/AccountInsightsExecutive"
+            }
+          },
+          "executiveVoices": {
+            "type": "object",
+            "nullable": true,
+            "description": "Recent LinkedIn posts of the company executives. Null when there are none",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "nullable": true
+              },
+              "posts": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AccountInsightsExecutivePost"
+                }
+              }
+            }
+          },
+          "relatedNews": {
+            "type": "array",
+            "description": "Recent news about the company",
+            "items": {
+              "$ref": "#/components/schemas/AccountInsightsNewsArticle"
+            }
+          },
+          "relationshipExplorer": {
+            "type": "object",
+            "nullable": true,
+            "description": "People at the company suggested to reach out to. The suggestions depend on the account used for scraping",
+            "properties": {
+              "totalDisplayCount": {
+                "type": "string",
+                "nullable": true,
+                "description": "Number of people found, as LinkedIn displays it"
+              },
+              "total": {
+                "type": "integer",
+                "nullable": true,
+                "description": "Number of people found"
+              },
+              "highlights": {
+                "type": "array",
+                "description": "How many of the people found have each highlight, e.g. \"RPC\" (recently changed jobs) or \"RPOL\" (posted on LinkedIn). \"PCOLL\" (your past colleagues) and \"COMM\" (shared experiences with you): only for requests with a [custom account](/guides/custom-accounts)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "count": {
+                      "type": "integer",
+                      "nullable": true
+                    }
+                  }
+                }
+              },
+              "companyHighlights": {
+                "type": "array",
+                "description": "Highlights of the company itself, e.g. \"HIRING_ON_LINKEDIN\" or \"SENIOR_LEADERSHIP_CHANGE\"",
+                "items": {
+                  "$ref": "#/components/schemas/AccountHighlight"
+                }
+              },
+              "leads": {
+                "type": "array",
+                "description": "Up to 8 of the people found",
+                "items": {
+                  "$ref": "#/components/schemas/AccountInsightsLead"
+                }
+              }
+            }
+          },
+          "growthInsights": {
+            "type": "object",
+            "description": "Headcount, hiring and job opening charts",
+            "properties": {
+              "employeeCount": {
+                "type": "object",
+                "nullable": true,
+                "description": "Total headcount over time",
+                "properties": {
+                  "total": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Current headcount"
+                  },
+                  "changePercentage": {
+                    "type": "number",
+                    "nullable": true,
+                    "description": "Headcount change over the whole series (two years), in percent"
+                  },
+                  "medianTenureYears": {
+                    "type": "number",
+                    "nullable": true,
+                    "description": "Median employee tenure in years"
+                  },
+                  "monthly": {
+                    "type": "array",
+                    "description": "Headcount month by month over the last two years",
+                    "items": {
+                      "$ref": "#/components/schemas/AccountInsightsMonthlyCount"
+                    }
+                  }
+                }
+              },
+              "headcountByFunction": {
+                "type": "object",
+                "nullable": true,
+                "description": "Headcount by job function. `total` is the company total over the last year",
+                "properties": {
+                  "total": {
+                    "$ref": "#/components/schemas/AccountInsightsFunctionHeadcount"
+                  },
+                  "threeMonths": {
+                    "type": "array",
+                    "description": "Headcount by function over the last three months",
+                    "items": {
+                      "$ref": "#/components/schemas/AccountInsightsFunctionHeadcount"
+                    }
+                  },
+                  "sixMonths": {
+                    "type": "array",
+                    "description": "Headcount by function over the last six months",
+                    "items": {
+                      "$ref": "#/components/schemas/AccountInsightsFunctionHeadcount"
+                    }
+                  },
+                  "oneYear": {
+                    "type": "array",
+                    "description": "Headcount by function over the last year",
+                    "items": {
+                      "$ref": "#/components/schemas/AccountInsightsFunctionHeadcount"
+                    }
+                  }
+                }
+              },
+              "newHires": {
+                "type": "array",
+                "nullable": true,
+                "description": "New hires month by month over the last two years",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "month": {
+                      "type": "string",
+                      "description": "YYYY-MM"
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "All new hires"
+                    },
+                    "senior": {
+                      "type": "integer",
+                      "description": "Senior new hires"
+                    }
+                  }
+                }
+              },
+              "jobOpenings": {
+                "type": "object",
+                "nullable": true,
+                "description": "Job openings and their change over time, in total and by function",
+                "properties": {
+                  "latestQuarter": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "YYYY-MM of the latest figures"
+                  },
+                  "total": {
+                    "$ref": "#/components/schemas/AccountInsightsJobOpenings"
+                  },
+                  "byFunction": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/AccountInsightsJobOpenings"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "recentGrowthAlerts": {
+            "type": "array",
+            "description": "Up to 3 latest alerts about the company growth or risks, e.g. employees of another company moving here",
+            "items": {
+              "$ref": "#/components/schemas/AccountInsightsAlert"
+            }
+          },
+          "peopleAlsoViewed": {
+            "type": "array",
+            "description": "Similar companies that people also viewed, up to 12",
+            "items": {
+              "$ref": "#/components/schemas/AccountInsightsCompanyCard"
+            }
+          },
+          "accountAlerts": {
+            "type": "object",
+            "description": "Latest alerts about the company and its employees: company posts, job changes, etc.",
+            "properties": {
+              "nextStart": {
+                "type": "integer",
+                "nullable": true,
+                "description": "Offset of the next page of alerts; null when there are no more"
+              },
+              "items": {
+                "type": "array",
+                "description": "Up to 20 latest alerts",
+                "items": {
+                  "$ref": "#/components/schemas/AccountInsightsAlert"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AccountInsightsMoney": {
+        "type": "object",
+        "nullable": true,
+        "description": "An amount of money: `amount` of `unit`, e.g. 402.84 BILLION USD",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string",
+            "description": "e.g. \"MILLION\" or \"BILLION\""
+          },
+          "currency": {
+            "type": "string",
+            "description": "e.g. \"USD\""
+          }
+        }
+      },
+      "AccountInsightsGrowth": {
+        "type": "object",
+        "properties": {
+          "timespan": {
+            "type": "string",
+            "description": "\"SIX_MONTHS\", \"YEAR\" or \"TWO_YEAR\""
+          },
+          "percentage": {
+            "type": "number",
+            "description": "Headcount change over the timespan, in percent"
+          }
+        }
+      },
+      "AccountInsightsSourcedText": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "type": "string",
+            "nullable": true,
+            "description": "Source URL"
+          }
+        }
+      },
+      "AccountInsightsRevenue": {
+        "type": "object",
+        "nullable": true,
+        "description": "Revenue of a period: the reported figure and the estimated range",
+        "properties": {
+          "period": {
+            "type": "string",
+            "nullable": true,
+            "description": "\"2025\" for a year, \"Q2 2026\" for a quarter"
+          },
+          "reported": {
+            "$ref": "#/components/schemas/AccountInsightsMoney"
+          },
+          "estimatedMin": {
+            "$ref": "#/components/schemas/AccountInsightsMoney"
+          },
+          "estimatedMax": {
+            "$ref": "#/components/schemas/AccountInsightsMoney"
+          },
+          "source": {
+            "type": "string",
+            "nullable": true,
+            "description": "Source URL"
+          }
+        }
+      },
+      "AccountInsightsPosition": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyId": {
+            "type": "string",
+            "nullable": true,
+            "description": "LinkedIn company ID"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedOn": {
+            "type": "string",
+            "nullable": true,
+            "description": "YYYY-MM"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "tenureAtPosition": {
+            "type": "object",
+            "nullable": true,
+            "description": "Time in this position",
+            "properties": {
+              "years": {
+                "type": "integer"
+              },
+              "months": {
+                "type": "integer"
+              }
+            }
+          },
+          "tenureAtCompany": {
+            "type": "object",
+            "nullable": true,
+            "description": "Time at the company",
+            "properties": {
+              "years": {
+                "type": "integer"
+              },
+              "months": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "AccountInsightsPerson": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LinkedIn profile ID"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Full name"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "pictureUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "AccountInsightsExecutive": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LinkedIn profile ID"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Full name"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "pictureUrl": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "industry": {
+            "type": "string",
+            "nullable": true
+          },
+          "degree": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Connection degree between the person and your account: 1, 2 or 3, and -1 when out of network. Only for requests with a [custom account](/guides/custom-accounts)"
+          },
+          "positions": {
+            "type": "array",
+            "description": "Positions, latest first",
+            "items": {
+              "$ref": "#/components/schemas/AccountInsightsPosition"
+            }
+          }
+        }
+      },
+      "AccountInsightsExecutivePost": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Post URN"
+          },
+          "url": {
+            "type": "string",
+            "nullable": true,
+            "description": "Post URL"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "nullable": true,
+            "description": "ISO 8601 date",
+            "format": "date-time"
+          },
+          "author": {
+            "$ref": "#/components/schemas/AccountInsightsExecutive"
+          }
+        }
+      },
+      "AccountInsightsNewsArticle": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AccountHighlight": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "e.g. \"HIRING_ON_LINKEDIN\" or \"SENIOR_LEADERSHIP_CHANGE\" for a company, \"RECENTLY_HIRED\" or \"POSTED_ON_LINKEDIN\" for a person"
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "header": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AccountInsightsLead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LinkedIn profile ID"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Full name"
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "pictureUrl": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "degree": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Connection degree between the person and your account: 1, 2 or 3, and -1 when out of network. Only for requests with a [custom account](/guides/custom-accounts)"
+          },
+          "premium": {
+            "type": "boolean"
+          },
+          "openProfile": {
+            "type": "boolean"
+          },
+          "seniority": {
+            "type": "array",
+            "description": "e.g. \"CXO\" or \"Owner / Partner\"",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currentPositions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountInsightsPosition"
+            }
+          },
+          "highlights": {
+            "type": "array",
+            "description": "Why the person is suggested",
+            "items": {
+              "$ref": "#/components/schemas/AccountHighlight"
+            }
+          }
+        }
+      },
+      "AccountInsightsCompanyCard": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LinkedIn company ID"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "industry": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeeCountRange": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeeDisplayCount": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeeGrowth": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountInsightsGrowth"
+            }
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "logoUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "AccountInsightsAlert": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Alert ID"
+          },
+          "type": {
+            "type": "string",
+            "description": "e.g. \"ACCOUNT_SHARED_UPDATE\", \"ACCOUNT_HEADCOUNT_ACCELERATED_FLOW\", \"LEAD_POSITION_CHANGE_NEW_COMPANY\" or \"LEAD_POSITION_CHANGE_SAME_COMPANY\""
+          },
+          "createdAt": {
+            "type": "string",
+            "nullable": true,
+            "description": "ISO 8601 date",
+            "format": "date-time"
+          },
+          "headline": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortHeadline": {
+            "type": "string",
+            "nullable": true
+          },
+          "body": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "lead": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccountInsightsPerson"
+              }
+            ],
+            "nullable": true,
+            "description": "The person the alert is about, for alerts about employees"
+          }
+        }
+      },
+      "AccountInsightsMonthlyCount": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "description": "YYYY-MM"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "changePercentage": {
+            "type": "number",
+            "nullable": true,
+            "description": "Change against the previous month, in percent"
+          }
+        }
+      },
+      "AccountInsightsFunctionHeadcount": {
+        "type": "object",
+        "properties": {
+          "function": {
+            "type": "string",
+            "description": "Job function, e.g. \"Engineering\", or \"Total\""
+          },
+          "count": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Current headcount"
+          },
+          "changePercentage": {
+            "type": "number",
+            "nullable": true,
+            "description": "Change over the period, in percent"
+          },
+          "monthly": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountInsightsMonthlyCount"
+            }
+          }
+        }
+      },
+      "AccountInsightsJobOpenings": {
+        "type": "object",
+        "properties": {
+          "function": {
+            "type": "string",
+            "description": "Job function, e.g. \"Engineering\", or \"Total\""
+          },
+          "latestCount": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Job openings in the latest quarter"
+          },
+          "threeMonthPercentage": {
+            "type": "number",
+            "nullable": true,
+            "description": "Change over three months, in percent"
+          },
+          "sixMonthPercentage": {
+            "type": "number",
+            "nullable": true,
+            "description": "Change over six months, in percent"
+          },
+          "oneYearPercentage": {
+            "type": "number",
+            "nullable": true,
+            "description": "Change over one year, in percent"
           }
         }
       },
