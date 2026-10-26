@@ -1020,7 +1020,7 @@
                   "type": "object",
                   "properties": {
                     "element": {
-                      "$ref": "#/components/schemas/PostShort"
+                      "$ref": "#/components/schemas/PostDetail"
                     },
                     "status": {
                       "type": "integer"
@@ -6793,6 +6793,86 @@
                     }
                   }
                 }
+              }
+            }
+          }
+        }
+      },
+      "PostDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PostShort"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "isCollaborative": {
+                "type": "boolean",
+                "nullable": true,
+                "description": "Whether the post was published together with other profiles or pages (a collaborative post); `null` when it could not be determined"
+              },
+              "collaborators": {
+                "type": "array",
+                "nullable": true,
+                "description": "The profiles and pages the post was published with, the author not included; empty for a post that is not collaborative, `null` when they could not be determined",
+                "items": {
+                  "$ref": "#/components/schemas/PostCollaborator"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "PostCollaborator": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Profile ID (`ACoAA…`) of a person, numeric ID of a company or showcase page"
+          },
+          "urn": {
+            "type": "string",
+            "description": "Numeric member ID of a person, numeric organization ID of a page"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["profile", "company"]
+          },
+          "name": {
+            "type": "string"
+          },
+          "publicIdentifier": {
+            "type": "string",
+            "nullable": true,
+            "description": "Public identifier of a person"
+          },
+          "universalName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Universal name of a company or showcase page"
+          },
+          "linkedinUrl": {
+            "type": "string"
+          },
+          "info": {
+            "type": "string",
+            "nullable": true,
+            "description": "Headline of a person, follower count of a page"
+          },
+          "avatar": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "width": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "height": {
+                "type": "integer",
+                "format": "int32"
               }
             }
           }
