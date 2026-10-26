@@ -1,0 +1,37 @@
+---
+title: 'Get post v2'
+openapi: 'GET /linkedin/post-v2'
+---
+
+<CodeGroup>
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  url: 'https://www.linkedin.com/feed/update/urn:li:activity:7509227111648452609',
+});
+fetch(`https://api.harvestapi.io/linkedin/post-v2?${params.toString()}`, {
+  headers: { 'X-API-Key': '<api-key>' },
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+```bash cURL
+curl --request GET \
+  --url https://api.harvestapi.io/linkedin/post-v2?url=https://www.linkedin.com/feed/update/urn:li:activity:7509227111648452609 \
+  --header 'X-API-Key: <api-key>'
+```
+
+```python Python
+import requests
+
+url = "https://api.harvestapi.io/linkedin/post-v2?url=https://www.linkedin.com/feed/update/urn:li:activity:7509227111648452609"
+
+headers = {"X-API-Key": "<api-key>"}
+
+response = requests.request("GET", url, headers=headers)
+
+print(response.text)
+```
+
+</CodeGroup>
