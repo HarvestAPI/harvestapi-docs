@@ -284,6 +284,123 @@
         }
       }
     },
+    "/linkedin/profile-by-email": {
+      "get": {
+        "summary": "Find a LinkedIn profile by email",
+        "description": "Find the LinkedIn profile of the person behind a work email address (reverse email lookup). Charged only when a profile is found.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "description": "The email address to look up, e.g. `john.smith@acme.com`",
+            "schema": { "type": "string", "format": "email" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile by email response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "element": {
+                      "$ref": "#/components/schemas/ProfileByEmail"
+                    },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "query": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "description": "The email address looked up, lowercased"
+                        },
+                        "companyId": {
+                          "type": "string",
+                          "description": "ID of the LinkedIn company found for the email domain. Only when the profile was searched"
+                        },
+                        "companyUniversalName": {
+                          "type": "string",
+                          "description": "Universal name of that company"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "element": {
+                    "id": "ACoAABx7Ld0BqT1o3dXc9zKfP2uWm4hYs8vNe5Q",
+                    "publicIdentifier": "john-smith-4b21a7",
+                    "linkedinUrl": "https://www.linkedin.com/in/john-smith-4b21a7",
+                    "name": "John Smith",
+                    "position": "Head of Sales at Acme",
+                    "location": {
+                      "linkedinText": "Austin, Texas, United States"
+                    },
+                    "photo": "https://media.licdn.com/dms/image/v2/C4E03AQH7example/profile-displayphoto-shrink_100_100/0/1600000000000"
+                  },
+                  "status": 200,
+                  "query": {
+                    "email": "john.smith@acme.com",
+                    "companyId": "12345678",
+                    "companyUniversalName": "acme"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The `email` parameter is missing or is not an email address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No profile found. Not charged. The `error` text says why: the address contains no name to search for (e.g. `info@`), it is at a personal email provider, no LinkedIn company has a website on its domain, or no matching person was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "query": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "status": 404,
+                  "error": "Profile not found: no LinkedIn company found for the domain acme.com",
+                  "query": {
+                    "email": "john.smith@acme.com"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
 
     "/linkedin/company": {
       "get": {
@@ -4202,6 +4319,11 @@
           "linkedinUrl": { "type": "string", "format": "uri" },
           "firstName": { "type": "string" },
           "lastName": { "type": "string" },
+          "pronoun": {
+            "type": "string",
+            "nullable": true,
+            "description": "The member's pronouns as shown on the profile, e.g. \"he/him\"; null when not set."
+          },
           "emails": {
             "type": "array",
             "items": {
@@ -4223,7 +4345,61 @@
           },
           "headline": { "type": "string" },
           "openToWork": { "type": "boolean" },
+          "openToWorkCard": {
+            "type": "object",
+            "nullable": true,
+            "description": "The profile's \"Open to work\" card, when it shows one to everyone. Its job titles, other locations and start date are only on LinkedIn's details page and are not returned.",
+            "properties": {
+              "visibility": { "type": "string", "example": "Everyone on LinkedIn" },
+              "locations": {
+                "type": "array",
+                "description": "The locations the card names (the first preferred one).",
+                "items": { "type": "string" },
+                "example": ["Copenhagen Metropolitan Area"]
+              },
+              "moreLocations": {
+                "type": "integer",
+                "description": "How many more preferred locations there are (\"+2 more\").",
+                "example": 2
+              },
+              "workplaceTypes": {
+                "type": "array",
+                "items": { "type": "string" },
+                "example": ["On-site", "Hybrid"]
+              },
+              "detailsUrl": { "type": "string", "format": "uri" },
+              "description": {
+                "type": "string",
+                "description": "The card's text as shown.",
+                "example": "Copenhagen Metropolitan Area +2 more | On-site · Hybrid"
+              }
+            }
+          },
           "hiring": { "type": "boolean" },
+          "hiringCard": {
+            "type": "object",
+            "nullable": true,
+            "description": "The profile's \"Hiring\" card: the role the member hires for.",
+            "properties": {
+              "jobTitle": { "type": "string", "example": "Live Medical Scribe" },
+              "companyName": { "type": "string", "nullable": true },
+              "location": { "type": "string", "nullable": true },
+              "workplaceType": { "type": "string", "nullable": true, "example": "On-site" },
+              "postedAgo": {
+                "type": "string",
+                "nullable": true,
+                "description": "How long ago the job was posted, as the card says it.",
+                "example": "903 days ago"
+              },
+              "jobUrl": {
+                "type": "string",
+                "format": "uri",
+                "example": "https://www.linkedin.com/jobs/view/3919925771/"
+              },
+              "jobId": { "type": "string", "example": "3919925771" },
+              "description": { "type": "string", "description": "The card's text as shown." }
+            }
+          },
           "premium": { "type": "boolean" },
           "influencer": { "type": "boolean" },
           "memorialized": { "type": "boolean" },
@@ -4269,6 +4445,17 @@
               }
             }
           },
+          "multiLocaleAbout": {
+            "type": "array",
+            "description": "The About text in the profile's primary language and in English, when the member wrote both and they differ; `about` is the English one. Other language versions of the About section are not returned.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "about": { "type": "string" },
+                "locale": { "type": "string", "example": "fr_FR" }
+              }
+            }
+          },
           "services": { "$ref": "#/components/schemas/Services" },
           "featured": {
             "$ref": "#/components/schemas/Featured"
@@ -4296,6 +4483,21 @@
           "receivedRecommendations": {
             "type": "array",
             "items": { "type": "object" }
+          },
+          "givenRecommendations": {
+            "type": "array",
+            "description": "Recommendations the member wrote for others: the first entries the profile shows, up to the first 20 when the profile has many received recommendations. `sectionTotals.givenRecommendations` holds their total.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "givenTo": { "type": "string" },
+                "givenToLink": { "type": "string", "format": "uri" },
+                "givenToHeadline": { "type": "string", "nullable": true },
+                "givenToPicture": { "$ref": "#/components/schemas/ImageObject" },
+                "givenAt": { "type": "string", "example": "January 27, 2026" },
+                "description": { "type": "string" }
+              }
+            }
           },
           "skills": {
             "type": "array",
@@ -4409,6 +4611,12 @@
         "properties": {
           "position": { "type": "string" },
           "location": { "type": "string" },
+          "geoId": {
+            "type": "string",
+            "nullable": true,
+            "description": "LinkedIn geo id of the position's location, the id the search endpoints take as `geoId`; null when the position has none.",
+            "example": "102194656"
+          },
           "employmentType": { "type": "string" },
           "workplaceType": { "type": "string" },
           "companyName": { "type": "string" },
@@ -4424,7 +4632,51 @@
           "startDate": { "$ref": "#/components/schemas/DateObject" },
           "endDate": { "$ref": "#/components/schemas/DateObject" },
           "companyLogo": { "$ref": "#/components/schemas/ImageObject" },
-          "companyUniversalName": { "type": "string" }
+          "companyUniversalName": { "type": "string" },
+          "multiLocalePosition": {
+            "type": "array",
+            "description": "The title in every language the member wrote it in, on profiles with more than one language; absent when the title has one language. `position` is the English title, else the one in the profile's primary language.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "position": { "type": "string" },
+                "locale": { "type": "string", "example": "da_DK" }
+              }
+            }
+          },
+          "multiLocaleDescription": {
+            "type": "array",
+            "description": "The description in every language the member wrote it in; absent for a single language. `description` is the English one, else the one in the profile's primary language.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": { "type": "string" },
+                "locale": { "type": "string", "example": "da_DK" }
+              }
+            }
+          },
+          "multiLocaleCompanyName": {
+            "type": "array",
+            "description": "The company name the member wrote per language, when the languages differ.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "companyName": { "type": "string" },
+                "locale": { "type": "string", "example": "da_DK" }
+              }
+            }
+          },
+          "multiLocaleLocation": {
+            "type": "array",
+            "description": "The location the member wrote per language, when the languages differ.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "location": { "type": "string" },
+                "locale": { "type": "string", "example": "da_DK" }
+              }
+            }
+          }
         }
       },
       "Education": {
@@ -4442,7 +4694,62 @@
           "startDate": { "$ref": "#/components/schemas/DateObject" },
           "endDate": { "$ref": "#/components/schemas/DateObject" },
           "period": { "type": "string" },
-          "schoolLogo": { "$ref": "#/components/schemas/ImageObject" }
+          "schoolLogo": { "$ref": "#/components/schemas/ImageObject" },
+          "multiLocaleSchoolName": {
+            "type": "array",
+            "description": "The school name the member wrote per language, when the languages differ.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "schoolName": { "type": "string" },
+                "locale": { "type": "string", "example": "fr_FR" }
+              }
+            }
+          },
+          "multiLocaleDegree": {
+            "type": "array",
+            "description": "The degree in every language the member wrote it in, on profiles with more than one language; absent for a single language. `degree` is the English one, else the one in the profile's primary language.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "degree": { "type": "string" },
+                "locale": { "type": "string", "example": "fr_FR" }
+              }
+            }
+          },
+          "multiLocaleFieldOfStudy": {
+            "type": "array",
+            "description": "The field of study in every language the member wrote it in, as `multiLocaleDegree`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fieldOfStudy": { "type": "string" },
+                "locale": { "type": "string", "example": "fr_FR" }
+              }
+            }
+          },
+          "multiLocaleDescription": {
+            "type": "array",
+            "description": "The description in every language the member wrote it in, as `multiLocaleDegree`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": { "type": "string" },
+                "locale": { "type": "string", "example": "fr_FR" }
+              }
+            }
+          },
+          "multiLocaleInsights": {
+            "type": "array",
+            "description": "The activities and societies in every language the member wrote them in, as `multiLocaleDegree`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "insights": { "type": "string" },
+                "locale": { "type": "string", "example": "fr_FR" }
+              }
+            }
+          }
         }
       },
       "Services": {
@@ -4715,6 +5022,45 @@
         }
       },
 
+      "ProfileByEmail": {
+        "required": ["id", "linkedinUrl"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "LinkedIn profile ID"
+          },
+          "publicIdentifier": {
+            "type": "string",
+            "nullable": true,
+            "description": "The part of the profile URL after /in/. Null when the profile was found in our database and its public identifier is not known; `linkedinUrl` then uses the profile ID"
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "name": {
+            "type": "string",
+            "description": "Only when the profile was found by the search, like `position`, `location` and `photo`. A profile found in our database comes with its ID and URL only"
+          },
+          "position": {
+            "type": "string",
+            "description": "The profile's headline"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "linkedinText": {
+                "type": "string"
+              }
+            }
+          },
+          "photo": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
       "ProfileShort": {
         "required": ["publicIdentifier"],
         "type": "object",
