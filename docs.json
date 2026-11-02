@@ -32,11 +32,11 @@
             "group": "LinkedIn Profile",
             "pages": [
               "linkedin-api-reference/profile/get",
-              "linkedin-api-reference/profile/profile-by-email",
               "linkedin-api-reference/leads/search-leads",
               "linkedin-api-reference/profile/profile-posts",
               "linkedin-api-reference/profile/profile-comments",
-              "linkedin-api-reference/profile/profile-reactions"
+              "linkedin-api-reference/profile/profile-reactions",
+              "linkedin-api-reference/profile/profile-by-email"
             ]
           },
           {

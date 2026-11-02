@@ -287,7 +287,7 @@
     "/linkedin/profile-by-email": {
       "get": {
         "summary": "Find a LinkedIn profile by email",
-        "description": "Find the LinkedIn profile of the person behind a work email address (reverse email lookup). Charged only when a profile is found.",
+        "description": "Find the LinkedIn profile of the person behind a work email address (reverse email lookup).",
         "parameters": [
           {
             "name": "email",
@@ -356,7 +356,7 @@
             }
           },
           "400": {
-            "description": "The `email` parameter is missing or is not an email address",
+            "description": "The `email` parameter is missing or is not a work email address with a name: personal email addresses (`gmail.com`, `outlook.com`, ...) and role addresses such as `info@` are rejected",
             "content": {
               "application/json": {
                 "schema": {
@@ -366,7 +366,7 @@
             }
           },
           "404": {
-            "description": "No profile found. Not charged. The `error` text says why: the address contains no name to search for (e.g. `info@`), it is at a personal email provider, no LinkedIn company has a website on its domain, or no matching person was found",
+            "description": "No profile found. The `error` text says why: no LinkedIn company has a website on the email's domain, or no matching person was found",
             "content": {
               "application/json": {
                 "schema": {
@@ -4471,6 +4471,29 @@
           "certifications": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Certification" }
+          },
+          "connectedApps": {
+            "type": "array",
+            "description": "Apps the member connected to the profile (Duolingo, LinkedIn Recruiter, …), which LinkedIn shows with the licenses & certifications; they are not part of `certifications`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "example": "LinkedIn Recruiter" },
+                "sourcedFrom": { "type": "string", "example": "LinkedIn" },
+                "sourcedAt": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "The month shown next to the source.",
+                  "example": "Oct 2026"
+                },
+                "companyLinkedinUrl": {
+                  "type": "string",
+                  "format": "uri",
+                  "example": "https://www.linkedin.com/company/1337/"
+                },
+                "companyLogo": { "$ref": "#/components/schemas/ImageObject" }
+              }
+            }
           },
           "projects": {
             "type": "array",
