@@ -287,14 +287,26 @@
     "/linkedin/profile-by-email": {
       "get": {
         "summary": "Find a LinkedIn profile by email",
-        "description": "Find the LinkedIn profile of the person behind a work email address (reverse email lookup).",
+        "description": "Find the LinkedIn profile of the person behind a work email address (reverse email lookup) and get their main profile.",
         "parameters": [
           {
             "name": "email",
             "in": "query",
             "required": true,
-            "description": "The email address to look up, e.g. `john.smith@acme.com`",
+            "description": "The work email address to look up, e.g. `john.smith@acme.com`",
             "schema": { "type": "string", "format": "email" }
+          },
+          {
+            "name": "firstName",
+            "in": "query",
+            "description": "The person's first name, if you know it. Replaces the first name read from the email address",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "lastName",
+            "in": "query",
+            "description": "The person's last name, if you know it. Replaces the last name read from the email address",
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -306,7 +318,7 @@
                   "type": "object",
                   "properties": {
                     "element": {
-                      "$ref": "#/components/schemas/ProfileByEmail"
+                      "$ref": "#/components/schemas/Profile"
                     },
                     "status": {
                       "type": "integer"
@@ -320,6 +332,14 @@
                         "email": {
                           "type": "string",
                           "description": "The email address looked up, lowercased"
+                        },
+                        "firstName": {
+                          "type": "string",
+                          "description": "The first name given, if any"
+                        },
+                        "lastName": {
+                          "type": "string",
+                          "description": "The last name given, if any"
                         },
                         "companyId": {
                           "type": "string",
@@ -338,12 +358,21 @@
                     "id": "ACoAABx7Ld0BqT1o3dXc9zKfP2uWm4hYs8vNe5Q",
                     "publicIdentifier": "john-smith-4b21a7",
                     "linkedinUrl": "https://www.linkedin.com/in/john-smith-4b21a7",
-                    "name": "John Smith",
-                    "position": "Head of Sales at Acme",
+                    "firstName": "John",
+                    "lastName": "Smith",
+                    "headline": "Head of Sales at Acme",
                     "location": {
-                      "linkedinText": "Austin, Texas, United States"
+                      "linkedinText": "Austin, Texas, United States",
+                      "countryCode": "US"
                     },
-                    "photo": "https://media.licdn.com/dms/image/v2/C4E03AQH7example/profile-displayphoto-shrink_100_100/0/1600000000000"
+                    "photo": "https://media.licdn.com/dms/image/v2/C4E03AQH7example/profile-displayphoto-shrink_800_800/0/1600000000000",
+                    "currentPosition": [
+                      {
+                        "companyName": "Acme",
+                        "companyId": "12345678",
+                        "companyLinkedinUrl": "https://www.linkedin.com/company/acme/"
+                      }
+                    ]
                   },
                   "status": 200,
                   "query": {
@@ -356,7 +385,7 @@
             }
           },
           "400": {
-            "description": "The `email` parameter is missing or is not a work email address with a name: personal email addresses (`gmail.com`, `outlook.com`, ...) and role addresses such as `info@` are rejected",
+            "description": "A parameter is missing or invalid, or the address cannot be looked up: personal email addresses (`gmail.com`, `outlook.com`, ...) are rejected, and so are addresses without a name in them (such as `info@`) unless `firstName` or `lastName` is given",
             "content": {
               "application/json": {
                 "schema": {
@@ -5045,45 +5074,6 @@
         }
       },
 
-      "ProfileByEmail": {
-        "required": ["id", "linkedinUrl"],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "LinkedIn profile ID"
-          },
-          "publicIdentifier": {
-            "type": "string",
-            "nullable": true,
-            "description": "The part of the profile URL after /in/. Null when the profile was found in our database and its public identifier is not known; `linkedinUrl` then uses the profile ID"
-          },
-          "linkedinUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "name": {
-            "type": "string",
-            "description": "Only when the profile was found by the search, like `position`, `location` and `photo`. A profile found in our database comes with its ID and URL only"
-          },
-          "position": {
-            "type": "string",
-            "description": "The profile's headline"
-          },
-          "location": {
-            "type": "object",
-            "properties": {
-              "linkedinText": {
-                "type": "string"
-              }
-            }
-          },
-          "photo": {
-            "type": "string",
-            "format": "uri"
-          }
-        }
-      },
       "ProfileShort": {
         "required": ["publicIdentifier"],
         "type": "object",
@@ -7186,6 +7176,23 @@
                 "description": "The profiles and pages the post was published with, the author not included; empty for a post that is not collaborative, `null` when they could not be determined",
                 "items": {
                   "$ref": "#/components/schemas/PostCollaborator"
+                }
+              },
+              "postVideo": {
+                "type": "object",
+                "properties": {
+                  "thumbnailUrl": {
+                    "type": "string"
+                  },
+                  "videoUrl": {
+                    "type": "string",
+                    "description": "The video as an MP4 file; the HLS playlist when no MP4 could be found"
+                  },
+                  "hlsUrl": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "The HLS playlist of the same video, for streaming; `null` when LinkedIn gave none"
+                  }
                 }
               }
             }

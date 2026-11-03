@@ -5,13 +5,26 @@ openapi: 'GET /linkedin/profile-by-email'
 
 ## Find the LinkedIn profile behind a work email
 
-Give a work email address and get the LinkedIn profile of the person who uses it (reverse email lookup).
+Give a work email address and get the LinkedIn profile of the person who uses it (reverse email lookup). The profile
+comes back as the main profile, the same as [Get profile](/linkedin-api-reference/profile/get) with `main=true`.
+
+The lookup searches LinkedIn live: the person's name is read from the email address (`john.smith@acme.com` → John Smith)
+and searched among the current and past employees of the company whose LinkedIn page has the email's domain as its website.
+If you know the person's name, pass `firstName` and `lastName`: they replace the name read from the address and make the
+match more precise. Only work email addresses are supported; personal ones (`gmail.com`, `outlook.com`, ...) are rejected.
+
+Results are best-effort matches, and their accuracy is not guaranteed. People with the same name at the company,
+nicknames, addresses that carry only an initial (`jsmith@`), or profiles that do not list the company can lead
+to a wrong profile or to none. When accuracy matters, check the returned profile against your data, for example
+its name and current position.
 
 <CodeGroup>
 
 ```javascript JavaScript
 const params = new URLSearchParams({
   email: 'john.smith@acme.com',
+  // firstName: 'John', // optional: pass the first name of the person when known
+  // lastName: 'Smith',
 });
 fetch(`https://api.harvestapi.io/linkedin/profile-by-email?${params.toString()}`, {
   headers: { 'X-API-Key': '<api-key>' },
@@ -31,7 +44,11 @@ import requests
 
 url = "https://api.harvestapi.io/linkedin/profile-by-email"
 
-params = {"email": "john.smith@acme.com"}
+params = {
+    "email": "john.smith@acme.com",
+    # "firstName": "John",  # optional: pass the first name of the person when known
+    # "lastName": "Smith",
+}
 
 headers = {"X-API-Key": "<api-key>"}
 
