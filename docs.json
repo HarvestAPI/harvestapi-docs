@@ -73,6 +73,10 @@
             "pages": ["linkedin-api-reference/group/get", "linkedin-api-reference/group/search"]
           },
           {
+            "group": "LinkedIn Event",
+            "pages": ["linkedin-api-reference/event/get", "linkedin-api-reference/event/search"]
+          },
+          {
             "group": "LinkedIn Ads",
             "pages": ["linkedin-api-reference/ads/ad-search", "linkedin-api-reference/ads/ad"]
           },
@@ -83,6 +87,10 @@
           {
             "group": "LinkedIn GeoID",
             "pages": ["linkedin-api-reference/geo-id/search"]
+          },
+          {
+            "group": "LinkedIn Typeahead",
+            "pages": ["linkedin-api-reference/typeahead/search"]
           },
           {
             "group": "LinkedIn Interactions",

@@ -1,0 +1,48 @@
+---
+title: 'Search Typeahead'
+openapi: 'GET /linkedin/typeahead-search'
+---
+
+Get the suggestions LinkedIn's search bar gives for a text: companies, schools, members and suggested searches,
+usually up to 8, in LinkedIn's order. Names come in lower case, as LinkedIn suggests them. A suggested search has the
+`type` `query` and only a `title`; its subtitle `in Jobs` marks a suggested job search. Pass a company's `id` to
+[Get company](/linkedin-api-reference/company/get) or a member's to [Get profile](/linkedin-api-reference/profile/get)
+for the full details.
+
+Set `type` to `company`, `school` or `profile` for the suggestions of one type only: 100 a page, with names as
+written, e.g. `?search=google&type=company&page=2`. Page through them with `page`, up to page 20 (2,000
+suggestions); a page with fewer than 100 suggestions is the last, as LinkedIn gives no total. Profiles found this way
+are linked by profile ID. Without `type` the suggestions come in one page.
+
+<CodeGroup>
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  search: 'google',
+});
+fetch(`https://api.harvestapi.io/linkedin/typeahead-search?${params.toString()}`, {
+  headers: { 'X-API-Key': '<api-key>' },
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+```bash cURL
+curl --request GET \
+  --url 'https://api.harvestapi.io/linkedin/typeahead-search?search=google' \
+  --header 'X-API-Key: <api-key>'
+```
+
+```python Python
+import requests
+
+url = "https://api.harvestapi.io/linkedin/typeahead-search?search=google"
+
+headers = {"X-API-Key": "<api-key>"}
+
+response = requests.request("GET", url, headers=headers)
+
+print(response.text)
+```
+
+</CodeGroup>

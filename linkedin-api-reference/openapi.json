@@ -1143,6 +1143,128 @@
       }
     },
 
+    "/linkedin/typeahead-search": {
+      "get": {
+        "summary": "Search LinkedIn typeahead",
+        "description": "Get the suggestions LinkedIn's search bar gives for a text: companies, schools, members and suggested searches, usually up to 8, in LinkedIn's order, with names in lower case. With `type`, the suggestions of companies, schools or profiles only: 100 a page, up to 20 pages, with names as written.",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": true,
+            "description": "The text typed into the search bar, up to 100 characters",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Suggestions of one type only, 100 a page. Without it, the search bar's own suggestions: up to 8 of every type, suggested searches included, in one page",
+            "schema": { "type": "string", "enum": ["company", "school", "profile"] }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number of one type's suggestions, from 1 to 20; only 1 without `type`. A page with fewer than 100 suggestions is the last",
+            "schema": { "type": "integer", "default": 1, "minimum": 1, "maximum": 20 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The suggestions for the text, in LinkedIn's order",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "elements": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TypeaheadSuggestion"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "nullable": true,
+                      "description": "With `type`: the page. LinkedIn gives no total, so `totalElements` and `totalPages` are 0. Null without `type`",
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "query": {
+                      "type": "object",
+                      "properties": {
+                        "search": { "type": "string" },
+                        "type": { "type": "string" },
+                        "page": { "type": "string" }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "elements": [
+                    {
+                      "type": "company",
+                      "title": "google",
+                      "subtitle": "Company • Software Development",
+                      "id": "1441",
+                      "urn": "urn:li:company:1441",
+                      "linkedinUrl": "https://www.linkedin.com/company/1441/",
+                      "image": "https://media.licdn.com/dms/image/v2/D4E0BAQexample/company-logo_100_100/0/1759350753990/google_logo"
+                    },
+                    {
+                      "type": "query",
+                      "title": "google",
+                      "subtitle": "in Jobs",
+                      "id": null,
+                      "urn": null,
+                      "linkedinUrl": null,
+                      "image": null
+                    },
+                    {
+                      "type": "query",
+                      "title": "google recruiter",
+                      "subtitle": null,
+                      "id": null,
+                      "urn": null,
+                      "linkedinUrl": null,
+                      "image": null
+                    },
+                    {
+                      "type": "company",
+                      "title": "google deepmind",
+                      "subtitle": "Company • Research Services",
+                      "id": "1594050",
+                      "urn": "urn:li:company:1594050",
+                      "linkedinUrl": "https://www.linkedin.com/company/1594050/",
+                      "image": "https://media.licdn.com/dms/image/v2/D4E0BAQexample/company-logo_200_200/0/1692960425188/googledeepmind_logo"
+                    }
+                  ],
+                  "status": 200,
+                  "query": {
+                    "search": "google"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "`search` is missing, given more than once, or longer than 100 characters; `type` is not `company`, `school` or `profile`; `page` is not 1 without `type`, or not from 1 to 20",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
     "/linkedin/post": {
       "get": {
         "summary": "Get LinkedIn post details",
@@ -2215,6 +2337,243 @@
           },
           "500": {
             "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/linkedin/event": {
+      "get": {
+        "summary": "Get a LinkedIn event",
+        "description": "Get a LinkedIn event by its URL or ID: its description, exact start and end, place, organizer, speakers and the post that announces it. Required at least one of the query parameters",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "description": "URL of the event, with its ID or its vanity name, e.g. `https://www.linkedin.com/events/7523060148135907328/`",
+            "schema": { "type": "string", "format": "url" }
+          },
+          {
+            "name": "eventId",
+            "in": "query",
+            "description": "ID of the event, e.g. `7523060148135907328`",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "element": {
+                      "$ref": "#/components/schemas/Event"
+                    },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "query": {
+                      "type": "object",
+                      "properties": {
+                        "url": { "type": "string" },
+                        "eventId": { "type": "string" }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "element": {
+                    "id": "7513241096366268417",
+                    "linkedinUrl": "https://www.linkedin.com/events/7513241096366268417/",
+                    "vanityName": "productanalyticsmeetup7513241096366268417",
+                    "name": "Product Analytics Meetup",
+                    "description": "An evening of talks on product analytics, followed by networking.",
+                    "startsAt": { "date": "2026-10-21T23:00:00.000Z", "timestamp": 1792623600000 },
+                    "endsAt": { "date": "2026-10-22T01:00:00.000Z", "timestamp": 1792630800000 },
+                    "timeZone": "AMERICA_CHICAGO",
+                    "displayTime": "Oct 21, 2026, 6:00 PM - 8:00 PM CDT",
+                    "status": "FUTURE",
+                    "cancelled": false,
+                    "privateEvent": false,
+                    "broadcastTool": null,
+                    "externalUrl": null,
+                    "address": {
+                      "line1": "Acme Office",
+                      "line2": "100 Main St",
+                      "line3": null,
+                      "line4": null,
+                      "city": "Houston",
+                      "geographicArea": "TX",
+                      "postalCode": "77002",
+                      "country": "US"
+                    },
+                    "venueDetails": "Acme Office, 3rd floor",
+                    "attendees": "22 attendees",
+                    "organizer": {
+                      "type": "company",
+                      "id": "12345678",
+                      "linkedinUrl": "https://www.linkedin.com/company/12345678/",
+                      "name": "Acme",
+                      "logo": "https://media.licdn.com/dms/image/v2/C4E0BAQexample/company-logo_400_400/0/1600000000000"
+                    },
+                    "speakers": [
+                      {
+                        "id": "ACoAABx7Ld0BqT1o3dXc9zKfP2uWm4hYs8vNe5Q",
+                        "linkedinUrl": "https://www.linkedin.com/in/ACoAABx7Ld0BqT1o3dXc9zKfP2uWm4hYs8vNe5Q",
+                        "firstName": "Jane",
+                        "lastName": "Smith",
+                        "headline": "Business Analyst at Acme",
+                        "picture": "https://media.licdn.com/dms/image/v2/D5603AQexample/profile-displayphoto-crop_800_800/0/1700000000000"
+                      }
+                    ],
+                    "image": "https://media.licdn.com/dms/image/v2/D561EAQexample/event-background-image-crop_720_1280/0/1791296266133",
+                    "post": {
+                      "urn": "urn:li:ugcPost:7513241098874417152",
+                      "linkedinUrl": "https://www.linkedin.com/posts/acme_product-analytics-meetup-activity-7513241099805581314-9Acu",
+                      "text": "Join us for our Product Analytics Meetup in Houston!",
+                      "likes": 7,
+                      "comments": 0,
+                      "shares": 1
+                    }
+                  },
+                  "status": 200,
+                  "query": {
+                    "url": "https://www.linkedin.com/events/7513241096366268417/"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Neither a valid event `url` nor an `eventId` was given",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such event: the `error` is `Event not found`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/linkedin/event-search": {
+      "get": {
+        "summary": "Search LinkedIn events",
+        "description": "Search LinkedIn events by keywords. Each page holds 50 events, sometimes a few more. LinkedIn lets a search be paged only so far: `pagination.totalElements` may count more events than the pages reach, and a page past the last event comes back empty.",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": true,
+            "description": "Keywords to search events for",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination, 50 events a page",
+            "schema": { "type": "integer", "default": 1 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of events matching the keywords",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "elements": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EventShort"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "query": {
+                      "type": "object",
+                      "properties": {
+                        "search": { "type": "string" },
+                        "page": { "type": "string" }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "elements": [
+                    {
+                      "id": "7513241096366268417",
+                      "linkedinUrl": "https://www.linkedin.com/events/7513241096366268417/",
+                      "name": "Product Analytics Meetup",
+                      "date": "Wed, Oct 21, 6:00 PM CDT",
+                      "location": "Acme Office, 100 Main St, Houston, TX, US, 77002",
+                      "organizer": "Acme",
+                      "attendees": "22 attendees",
+                      "summary": "An evening of talks on product analytics, followed by networking.",
+                      "image": "https://media.licdn.com/dms/image/v2/D561EAQexample/event-background-image-crop_720_1280/0/1791296266133"
+                    },
+                    {
+                      "id": "7518793259947565056",
+                      "linkedinUrl": "https://www.linkedin.com/events/7518793259947565056/",
+                      "name": "Marketing Career Panel",
+                      "date": "Tomorrow, 4:00 PM PDT",
+                      "location": "Online",
+                      "organizer": "Jane Smith",
+                      "attendees": "1 attendee",
+                      "summary": null,
+                      "image": null
+                    }
+                  ],
+                  "pagination": {
+                    "totalPages": 7,
+                    "totalElements": 350,
+                    "pageNumber": 1,
+                    "previousElements": 0,
+                    "pageSize": 50
+                  },
+                  "status": 200,
+                  "query": {
+                    "search": "marketing",
+                    "page": "1"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "`search` is missing, given more than once, or longer than 300 characters",
             "content": {
               "application/json": {
                 "schema": {
@@ -7744,6 +8103,323 @@
           }
         },
         "required": ["id"]
+      },
+
+      "EventShort": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the LinkedIn event"
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "format": "url",
+            "nullable": true,
+            "description": "URL of the event"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the event"
+          },
+          "date": {
+            "type": "string",
+            "nullable": true,
+            "description": "When the event starts, as LinkedIn displays it, e.g. `Wed, Oct 21, 6:00 PM CDT` or `Tomorrow, 9:00 AM UTC`. The time zone shown is not necessarily the event's: [Get event](/linkedin-api-reference/event/get) returns the exact time"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true,
+            "description": "`Online`, or the venue's name and address"
+          },
+          "organizer": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the organizer, a company or a member"
+          },
+          "attendees": {
+            "type": "string",
+            "nullable": true,
+            "description": "The attendee count as LinkedIn displays it, e.g. `22 attendees`"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true,
+            "description": "The event's description"
+          },
+          "image": {
+            "type": "string",
+            "format": "url",
+            "nullable": true,
+            "description": "URL of the event's cover image"
+          }
+        },
+        "required": ["id"]
+      },
+
+      "EventProfile": {
+        "type": "object",
+        "description": "A member the event names: its organizer or a speaker",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "The member's profile ID, which [Get profile](/linkedin-api-reference/profile/get) accepts as `query`"
+          },
+          "linkedinUrl": { "type": "string", "format": "url", "nullable": true },
+          "firstName": { "type": "string", "nullable": true },
+          "lastName": { "type": "string", "nullable": true },
+          "headline": { "type": "string", "nullable": true },
+          "picture": {
+            "type": "string",
+            "format": "url",
+            "nullable": true,
+            "description": "URL of the member's photo"
+          }
+        }
+      },
+
+      "Event": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the LinkedIn event"
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "format": "url",
+            "description": "URL of the event"
+          },
+          "vanityName": {
+            "type": "string",
+            "nullable": true,
+            "description": "The event's vanity name, its other URL: `https://www.linkedin.com/events/<vanityName>/`"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the event"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "The event's description"
+          },
+          "startsAt": {
+            "type": "object",
+            "nullable": true,
+            "description": "When the event starts",
+            "properties": {
+              "date": { "type": "string", "format": "date-time" },
+              "timestamp": {
+                "type": "integer",
+                "format": "int64",
+                "description": "Milliseconds since the epoch"
+              }
+            }
+          },
+          "endsAt": {
+            "type": "object",
+            "nullable": true,
+            "description": "When the event ends; null when the organizer set no end time",
+            "properties": {
+              "date": { "type": "string", "format": "date-time" },
+              "timestamp": {
+                "type": "integer",
+                "format": "int64",
+                "description": "Milliseconds since the epoch"
+              }
+            }
+          },
+          "timeZone": {
+            "type": "string",
+            "nullable": true,
+            "description": "The event's time zone as LinkedIn names it, e.g. `AMERICA_CHICAGO` or `ETC_UTC`"
+          },
+          "displayTime": {
+            "type": "string",
+            "nullable": true,
+            "description": "The event's time as LinkedIn displays it, e.g. `Oct 21, 2026, 6:00 PM - 8:00 PM CDT`. The time zone shown is not necessarily the event's: `startsAt` and `endsAt` are exact"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "enum": ["FUTURE", "ONGOING", "PAST"],
+            "description": "Whether the event is upcoming, happening now or over"
+          },
+          "cancelled": {
+            "type": "boolean"
+          },
+          "privateEvent": {
+            "type": "boolean"
+          },
+          "broadcastTool": {
+            "type": "string",
+            "nullable": true,
+            "enum": ["LINKEDIN_LIVE_VIDEO", "LINKEDIN_LIVE_AUDIO", "LINKEDIN_INTERACTIVE_MEETING"],
+            "description": "How the event is streamed on LinkedIn; null for an event held in person or elsewhere online"
+          },
+          "externalUrl": {
+            "type": "string",
+            "format": "url",
+            "nullable": true,
+            "description": "Link of an event held outside LinkedIn"
+          },
+          "address": {
+            "type": "object",
+            "nullable": true,
+            "description": "Where an in-person event takes place",
+            "properties": {
+              "line1": { "type": "string", "nullable": true },
+              "line2": { "type": "string", "nullable": true },
+              "line3": { "type": "string", "nullable": true },
+              "line4": { "type": "string", "nullable": true },
+              "city": { "type": "string", "nullable": true },
+              "geographicArea": { "type": "string", "nullable": true },
+              "postalCode": { "type": "string", "nullable": true },
+              "country": {
+                "type": "string",
+                "nullable": true,
+                "description": "Country code, e.g. `US`"
+              }
+            }
+          },
+          "venueDetails": {
+            "type": "string",
+            "nullable": true,
+            "description": "The venue as the organizer describes it"
+          },
+          "attendees": {
+            "type": "string",
+            "nullable": true,
+            "description": "The attendee count as LinkedIn displays it, e.g. `22 attendees`"
+          },
+          "organizer": {
+            "type": "object",
+            "nullable": true,
+            "description": "The organizer: a company (`type` is `company`) or a member (`type` is `profile`)",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["company", "profile"]
+              },
+              "id": {
+                "type": "string",
+                "nullable": true,
+                "description": "The company's ID, or the member's profile ID"
+              },
+              "linkedinUrl": { "type": "string", "format": "url", "nullable": true },
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "description": "The company's name. Companies only"
+              },
+              "logo": {
+                "type": "string",
+                "format": "url",
+                "nullable": true,
+                "description": "URL of the company's logo. Companies only"
+              },
+              "firstName": {
+                "type": "string",
+                "nullable": true,
+                "description": "Members only"
+              },
+              "lastName": {
+                "type": "string",
+                "nullable": true,
+                "description": "Members only"
+              },
+              "headline": {
+                "type": "string",
+                "nullable": true,
+                "description": "Members only"
+              },
+              "picture": {
+                "type": "string",
+                "format": "url",
+                "nullable": true,
+                "description": "URL of the member's photo. Members only"
+              }
+            }
+          },
+          "speakers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventProfile"
+            }
+          },
+          "image": {
+            "type": "string",
+            "format": "url",
+            "nullable": true,
+            "description": "URL of the event's cover image"
+          },
+          "post": {
+            "type": "object",
+            "nullable": true,
+            "description": "The LinkedIn post that announces the event",
+            "properties": {
+              "urn": { "type": "string", "nullable": true },
+              "linkedinUrl": {
+                "type": "string",
+                "format": "url",
+                "nullable": true,
+                "description": "URL of the post, which [Get post](/linkedin-api-reference/post/get-post) accepts"
+              },
+              "text": { "type": "string", "nullable": true },
+              "likes": { "type": "integer", "nullable": true },
+              "comments": { "type": "integer", "nullable": true },
+              "shares": { "type": "integer", "nullable": true }
+            }
+          }
+        },
+        "required": ["id", "linkedinUrl"]
+      },
+
+      "TypeaheadSuggestion": {
+        "type": "object",
+        "description": "A suggestion of LinkedIn's search bar: an entity (a company, school or member) or a suggested search",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "`query` for a suggested search; for an entity `company`, `school` or `profile`"
+          },
+          "title": {
+            "type": "string",
+            "description": "The suggested search, or the entity's name: in lower case among the search bar's own suggestions, as written with `type`"
+          },
+          "subtitle": {
+            "type": "string",
+            "nullable": true,
+            "description": "What LinkedIn shows under the title: `Company • IT Services and IT Consulting`, `School • US`, a member's headline, `in Jobs` for a suggested job search"
+          },
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "The entity's ID: the company ID of a company or school, the profile ID of a member. [Get company](/linkedin-api-reference/company/get) accepts a company's as `query`, [Get profile](/linkedin-api-reference/profile/get) a member's"
+          },
+          "urn": {
+            "type": "string",
+            "nullable": true,
+            "description": "The entity's URN: `urn:li:company:…` for a company, `urn:li:organization:…` for a school, `urn:li:member:…` for a member"
+          },
+          "linkedinUrl": {
+            "type": "string",
+            "format": "url",
+            "nullable": true,
+            "description": "URL of the company or school page, or of the member's profile: by profile ID when LinkedIn gives no public identifier, as always with `type`"
+          },
+          "image": {
+            "type": "string",
+            "format": "url",
+            "nullable": true,
+            "description": "URL of the entity's logo or photo"
+          }
+        },
+        "required": ["type", "title"]
       },
 
       "LinkedInAd": {
