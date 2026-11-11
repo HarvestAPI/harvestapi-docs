@@ -42,10 +42,60 @@
           }
         }
       }
+    },
+    "/linkedin/lead-search-capacity": {
+      "get": {
+        "summary": "Get lead search capacity",
+        "description": "How much of the general system capacity for lead search, account search and account insights is already used in the current hour and in the current day (UTC), in percent",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The share of the capacity used",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeadSearchCapacity"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "LeadSearchCapacity": {
+        "type": "object",
+        "properties": {
+          "hour": {
+            "type": "object",
+            "description": "The current hour (UTC)",
+            "properties": {
+              "usedPercent": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Share of this hour's capacity already used, rounded down. 100 means nothing is left this hour",
+                "example": 16
+              }
+            }
+          },
+          "day": {
+            "type": "object",
+            "description": "The current day (UTC)",
+            "properties": {
+              "usedPercent": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Share of today's capacity already used, rounded down. 100 means nothing is left today",
+                "example": 29
+              }
+            }
+          }
+        }
+      },
       "Pagination": {
         "type": "object",
         "properties": {

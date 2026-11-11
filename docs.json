@@ -114,6 +114,10 @@
               "platform-api-reference/account/my-api-user",
               "platform-api-reference/account/my-private-account-pools"
             ]
+          },
+          {
+            "group": "Capacity",
+            "pages": ["platform-api-reference/capacity/lead-search-capacity"]
           }
         ]
       }

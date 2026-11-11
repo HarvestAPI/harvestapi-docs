@@ -1,0 +1,42 @@
+---
+title: 'Lead Search Capacity'
+openapi: 'GET /linkedin/lead-search-capacity'
+---
+
+Shows how much of the general system capacity for [Search Leads](/linkedin-api-reference/leads/search-leads),
+[Search Accounts](/linkedin-api-reference/accounts/search-accounts) and
+[Account Insights](/linkedin-api-reference/accounts/account-insights) is already used in the current
+hour and in the current day (UTC), in percent.
+
+`100` means nothing is left for the rest of the hour (`hour`) or of the day (`day`), and requests
+to these endpoints can fail until capacity is available again.
+
+<CodeGroup>
+
+```javascript JavaScript
+fetch('https://api.harvestapi.io/linkedin/lead-search-capacity', {
+  headers: { 'X-API-Key': '<api-key>' },
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+```bash cURL
+curl --request GET \
+  --url https://api.harvestapi.io/linkedin/lead-search-capacity \
+  --header 'X-API-Key: <api-key>'
+```
+
+```python Python
+import requests
+
+url = "https://api.harvestapi.io/linkedin/lead-search-capacity"
+
+headers = {"X-API-Key": "<api-key>"}
+
+response = requests.request("GET", url, headers=headers)
+
+print(response.text)
+```
+
+</CodeGroup>
