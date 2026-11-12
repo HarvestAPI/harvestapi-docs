@@ -28,6 +28,7 @@
             "name": "query",
             "in": "query",
             "description": "URL or public identifier or profile ID of the LinkedIn profile ",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "url"
@@ -440,6 +441,7 @@
             "name": "query",
             "in": "query",
             "description": "URL or universal name or company ID of the LinkedIn company",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "url"
@@ -637,6 +639,7 @@
             "name": "query",
             "in": "query",
             "description": "URL or universal name or company ID of the LinkedIn company. A company ID skips the company lookup and answers faster",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "url"
@@ -3289,6 +3292,7 @@
             "name": "query",
             "in": "query",
             "description": "URL or universal name or company ID of the LinkedIn company. A company ID skips the company lookup and answers faster",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "url"
@@ -5098,6 +5102,12 @@
           "schoolId": { "type": "string" },
           "degree": { "type": "string" },
           "fieldOfStudy": { "type": "string" },
+          "grade": {
+            "type": "string",
+            "nullable": true,
+            "description": "The grade the member gave for this education (LinkedIn's \"Grade\" field, \"Note\" in German), as written; null when none is given. On profiles with more than one language, the English one, else the one in the profile's primary language.",
+            "example": "1,0 (898 / 900 Points)"
+          },
           "skills": {
             "type": "array",
             "items": { "type": "string" }
@@ -5150,9 +5160,20 @@
               }
             }
           },
+          "multiLocaleGrade": {
+            "type": "array",
+            "description": "The grade in every language the member wrote it in, as `multiLocaleDegree`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "grade": { "type": "string" },
+                "locale": { "type": "string", "example": "de_DE" }
+              }
+            }
+          },
           "multiLocaleInsights": {
             "type": "array",
-            "description": "The activities and societies in every language the member wrote them in, as `multiLocaleDegree`.",
+            "description": "The grade and the activities and societies in every language the member wrote either in, as `multiLocaleDegree`.",
             "items": {
               "type": "object",
               "properties": {
