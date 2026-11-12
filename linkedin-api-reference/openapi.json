@@ -6178,49 +6178,6 @@
                     "nullable": true
                   }
                 }
-              },
-              "teamLinkConnections": {
-                "type": "object",
-                "description": "Employees connected to your team. Only for requests with a [custom account](/guides/custom-accounts)",
-                "properties": {
-                  "displayCount": {
-                    "type": "string",
-                    "nullable": true
-                  }
-                }
-              },
-              "sharedAlumni": {
-                "type": "object",
-                "description": "Employees who studied at the same schools as you. Only for requests with a [custom account](/guides/custom-accounts)",
-                "properties": {
-                  "displayCount": {
-                    "type": "string",
-                    "nullable": true
-                  }
-                }
-              },
-              "personas": {
-                "type": "array",
-                "description": "Employee counts per persona of your account. Only for requests with a [custom account](/guides/custom-accounts)",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "nullable": true,
-                      "description": "Persona name, e.g. \"Director+\" or \"CXO\""
-                    },
-                    "type": {
-                      "type": "string",
-                      "nullable": true,
-                      "description": "e.g. \"DEFAULT_DIRECTOR\", \"DEFAULT_CXO\" or \"USER_GENERATED\""
-                    },
-                    "displayCount": {
-                      "type": "string",
-                      "nullable": true
-                    }
-                  }
-                }
               }
             }
           },
@@ -6365,26 +6322,6 @@
                 "type": "integer",
                 "nullable": true,
                 "description": "Number of people found"
-              },
-              "highlights": {
-                "type": "array",
-                "description": "How many of the people found have each highlight, e.g. \"RPC\" (recently changed jobs) or \"RPOL\" (posted on LinkedIn). \"PCOLL\" (your past colleagues) and \"COMM\" (shared experiences with you): only for requests with a [custom account](/guides/custom-accounts)",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "label": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "count": {
-                      "type": "integer",
-                      "nullable": true
-                    }
-                  }
-                }
               },
               "companyHighlights": {
                 "type": "array",
@@ -6752,11 +6689,6 @@
             "type": "string",
             "nullable": true
           },
-          "degree": {
-            "type": "integer",
-            "nullable": true,
-            "description": "Connection degree between the person and your account: 1, 2 or 3, and -1 when out of network. Only for requests with a [custom account](/guides/custom-accounts)"
-          },
           "positions": {
             "type": "array",
             "description": "Positions, latest first",
@@ -6874,11 +6806,6 @@
           "location": {
             "type": "string",
             "nullable": true
-          },
-          "degree": {
-            "type": "integer",
-            "nullable": true,
-            "description": "Connection degree between the person and your account: 1, 2 or 3, and -1 when out of network. Only for requests with a [custom account](/guides/custom-accounts)"
           },
           "premium": {
             "type": "boolean"
